@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">ACHud</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="not_available_text">N/A</string>
+    <string name="drawer_open">Menú abierto</string>
+    <string name="drawer_close">Menú cerrado</string>
+    <string name="menu_captura">Captura</string>
+    <string name="s_menu_camara_generica">Camara Generica</string>
+    <string name="s_menu_gopro">GoPro 2bp, 3, 3+</string>
+    <string name="ss_menu_crtl_sinc_auto">Control  y Sincro. Auto.</string>
+    <string name="ss_menu_sincro_manual">Sincronizacion Manual</string>
+    <string name="ss_menu_sincro_auto">Sincronizacion Automatica</string>
+    <string name="s_menu_sjcam">SJCam, Clones SJCam</string>
+    <string name="s_menu_camara_dispositivo">Camara del Dispositivo</string>
+    <string name="menu_datos">Datos</string>
+    <string name="menu_configuracion">Configuracion</string>
+    <string name="s_menu_aplicacion">Aplicacion</string>
+    <string name="s_menu_huds">HUD\'s</string>
+    <string name="s_menu_telemetria">Telemetria</string>
+    <string name="menu_ayuda">Ayuda</string>
+    <string name="s_menu_manual">Manual de uso</string>
+    <string name="s_menu_soporte">Soporte</string>
+    <string name="s_menu_acerca_de">Acerca de</string>
+    <string name="s_captura">Captura de datos y video</string>
+    <string name="s_datos">Administra los datos capturados</string>
+</resources>
