@@ -40,6 +40,8 @@ public class MainActivity extends ActionBarActivity {
     private int ultimaMarcaPosicionGrupo = -1;
     private int ultimaMarcaPosicionHijo = -1;
     private MyAdapter adapter;
+    public AcCore acCore;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,10 @@ public class MainActivity extends ActionBarActivity {
         //...y pie de página
         View footer = getLayoutInflater().inflate(R.layout.pie_pagina, null);
         mDrawerExpandableList.addFooterView(footer, null, false);
+
+
+        acCore = new AcCore(this);
+
 
         cargarDatos();
 
