@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="booooooo"
-        android:id="@+id/textView"
+        android:id="@+id/textView_caca"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0" />
 

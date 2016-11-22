@@ -16,6 +16,7 @@ public class AcCore {
     ServicioAdquisicion mService;
     MedicionDeEntorno ultimaMedicion;
     boolean mBound = false;
+    public String string_prueba;
 
     public AcCore(Context lcontext) {
 
@@ -26,6 +27,8 @@ public class AcCore {
         // Bind to LocalService
         Intent intentServicioAdquisicion = new Intent(context, ServicioAdquisicion.class);
         context.bindService(intentServicioAdquisicion, mConnection, Context.BIND_AUTO_CREATE);
+
+        string_prueba = "harcodeado en acCore";
 
     }
 

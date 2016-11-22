@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.mebene.ACHud.MainActivity;
 
 /**
@@ -17,12 +19,21 @@ import com.mebene.ACHud.MainActivity;
 public class Fm_cam_generica extends Fragment {
 
 AcCore acCore;
+    TextView tV_status;
+
+    public Fm_cam_generica() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fm_cam_generica, container, false);
+
+        //tV_status = (TextView)getView().findViewById(R.id.textView_caca);
+
+        //tV_status.setText(acCore.string_prueba);
+        //tV_status.setText("holis");
+
 
         return rootView;
     }
@@ -36,4 +47,14 @@ AcCore acCore;
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        tV_status = (TextView)getView().findViewById(R.id.textView_caca);
+
+        tV_status.setText(acCore.string_prueba);
+
+
+    }
 }
