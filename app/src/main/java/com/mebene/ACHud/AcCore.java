@@ -13,7 +13,7 @@ public class AcCore {
 
     Context context;
     public boolean adquiriendo;
-    ServicioAdquisicion mService;
+    ServicioAdquisicion2 mService;
     MedicionDeEntorno ultimaMedicion;
     boolean mBound = false;
     public String string_prueba;
@@ -25,8 +25,10 @@ public class AcCore {
         ultimaMedicion = null;
         mBound = false;
         // Bind to LocalService
-        Intent intentServicioAdquisicion = new Intent(context, ServicioAdquisicion.class);
-        context.bindService(intentServicioAdquisicion, mConnection, Context.BIND_AUTO_CREATE);
+        //Intent intentServicioAdquisicion = new Intent(context, ServicioAdquisicion2.class);
+        //context.bindService(intentServicioAdquisicion, mConnection, Context.BIND_AUTO_CREATE);
+
+        lcontext.startService(new Intent(lcontext, ServicioAdquisicion2.class));
 
         string_prueba = "harcodeado en acCore";
 
@@ -40,7 +42,7 @@ public class AcCore {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            ServicioAdquisicion.LocalBinder binder = (ServicioAdquisicion.LocalBinder) service;
+            ServicioAdquisicion2.LocalBinder binder = (ServicioAdquisicion2.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
         }

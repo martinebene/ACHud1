@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".ServicioAdquisicion"
+            android:name=".ServicioAdquisicion2"
             android:enabled="true"
             android:exported="true" >
         </service>

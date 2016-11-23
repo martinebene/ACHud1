@@ -7,7 +7,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -23,14 +22,14 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     private SensorManager sensorManager;
     private final IBinder mBinder = new LocalBinder();
 
+    public boolean adquirir=false;
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //**********************************************************************************************************************//
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public ServicioAdquisicion2() {
     }
-
-    boolean adquirir=false;
 
     //**********************************************************************************************************************//
     @Override
@@ -71,6 +70,8 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         return START_STICKY;
 
     }
+
+    //**********************************************************************************************************************//
 
 
     //**********************************************************************************************************************//
