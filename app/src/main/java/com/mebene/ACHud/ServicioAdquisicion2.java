@@ -35,7 +35,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Log.i("tag111", "Servicio adquisicion onCreate");
 
        // asyncMedicion = new AsyncMedicion();
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
@@ -56,10 +56,15 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         //return super.onStartCommand(intent, flags, startId);
         Log.i("tag111", "Servicio adquisicion onStart");
 
-        while (adquirir){
+        adquirir = true;
+
+        //while (adquirir){
+        for(int i=0; i<50 ;i++){
             try {
+                Log.i("tag111", "I=" + i);
                 Thread.sleep(4000);
-                Toast.makeText(getApplicationContext(), medicion.toString3(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), medicion.toString3(), Toast.LENGTH_LONG).show();
+                Log.i("tag111", "Medicion=" + medicion.toString3());
             } catch (Exception e) {
                 e.printStackTrace();
                 adquirir=false;
@@ -114,6 +119,8 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
         List<Sensor> listSensors;
 
+
+        /*
         listSensors = sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
         if(listSensors.get(0)!= null){
             Sensor magneticSensor = listSensors.get(0);
@@ -123,7 +130,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         }else{
             medicion.campoMagnetico.disponible = false;
         }
-
+*/
         listSensors = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if(listSensors.get(0)!= null){
             Sensor acelerometerSensor = listSensors.get(0);
@@ -133,7 +140,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         }else{
             medicion.aceleracion.disponible = false;
         }
-
+/*
         listSensors = sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE);
         if(listSensors.get(0)!= null){
             Sensor gyroscopeSensor = listSensors.get(0);
@@ -143,7 +150,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         }else{
             medicion.giro.disponible = false;
         }
-
+*/
 
     }
 
