@@ -57,12 +57,12 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         Log.i("tag111", "Servicio adquisicion onStart");
 
         adquirir = true;
-
+/*
         //while (adquirir){
         for(int i=0; i<50 ;i++){
             try {
                 Log.i("tag111", "I=" + i);
-                Thread.sleep(4000);
+                Thread.sleep(1000);
                 //Toast.makeText(getApplicationContext(), medicion.toString3(), Toast.LENGTH_LONG).show();
                 Log.i("tag111", "Medicion=" + medicion.toString3());
             } catch (Exception e) {
@@ -70,7 +70,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
                 adquirir=false;
             }
         }
-
+*/
 
         return START_STICKY;
 
@@ -180,6 +180,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             }
             //limpiarConsola();
             //agregarTextoAConsola(medicion.toString2());
+            Log.i("tag111", "Medicion=" + medicion.toString3());
         }
 
 
