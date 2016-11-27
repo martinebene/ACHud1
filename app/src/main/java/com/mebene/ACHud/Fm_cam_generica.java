@@ -13,6 +13,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.mebene.ACHud.MainActivity;
@@ -24,7 +27,9 @@ import com.mebene.ACHud.MainActivity;
 public class Fm_cam_generica extends Fragment {
 
 AcCore acCore;
-    TextView tV_status;
+    TextView tV_Status;
+    EditText eT_Consola;
+    Button bt1, bt2, bt3;
 
     public Fm_cam_generica() {
     }
@@ -33,12 +38,6 @@ AcCore acCore;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fm_cam_generica, container, false);
-
-        //tV_status = (TextView)getView().findViewById(R.id.textView_caca);
-
-        //tV_status.setText(acCore.string_prueba);
-        //tV_status.setText("holis");
-
 
         return rootView;
     }
@@ -49,6 +48,7 @@ AcCore acCore;
         super.onAttach(activity);
         MainActivity ma = (MainActivity) activity;
         acCore = ma.acCore;
+
     }
 
 
@@ -56,21 +56,37 @@ AcCore acCore;
     public void onResume() {
         super.onResume();
 
-        tV_status = (TextView)getView().findViewById(R.id.textView_caca);
-
-        tV_status.setText(acCore.string_prueba);
+        eT_Consola = (EditText) getView().findViewById(R.id.eT_Consola);
 
         LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(mMessageReceiver,
-                new IntentFilter("custom-event-name"));
+                new IntentFilter(ServicioAdquisicion2.BROADCAST_MEDICION));
+
+        bt1 = (Button) getView().findViewById(R.id.bt1);
+        bt2 = (Button) getView().findViewById(R.id.bt2);
+        bt3 = (Button) getView().findViewById(R.id.bt3);
+
+        bt1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                acCore.iniciarAdquisicion();
+            }
+        });
+
+        bt2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                acCore.detenerAdquisicion();
+                eT_Consola.setText("detenido");
+            }
+        });
     }
+
+
+
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            tV_status.setText(intent.getStringExtra("medicion"));
+            eT_Consola.setText(intent.getStringExtra("medicion"));
         }
-
-
     };
 
     @Override

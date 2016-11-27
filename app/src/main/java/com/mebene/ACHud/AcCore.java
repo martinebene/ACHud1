@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 
 /**
  * Created by Martin on 03/04/2016.
@@ -28,9 +29,18 @@ public class AcCore {
         //Intent intentServicioAdquisicion = new Intent(context, ServicioAdquisicion2.class);
         //context.bindService(intentServicioAdquisicion, mConnection, Context.BIND_AUTO_CREATE);
 
-        lcontext.startService(new Intent(lcontext, ServicioAdquisicion2.class));
 
-        string_prueba = "harcodeado en acCore";
+    }
+
+    public void iniciarAdquisicion(){
+        Log.i("tag111", "iniciarAdquisicion");
+        context.startService(new Intent(context, ServicioAdquisicion2.class));
+
+    }
+
+    public void detenerAdquisicion(){
+        Log.i("tag111", "detenerAdquisicion");
+        context.stopService(new Intent(context, ServicioAdquisicion2.class));
 
     }
 

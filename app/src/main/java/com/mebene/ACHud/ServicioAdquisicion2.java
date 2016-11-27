@@ -225,7 +225,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         @Override
         protected void onProgressUpdate (Object... params) {
 
-            Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
+            //Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
             Intent intent = new Intent(BROADCAST_MEDICION);
             intent.putExtra("medicion", medicion.toString3());
             LocalBroadcastManager.getInstance(lcontext).sendBroadcast(intent);
