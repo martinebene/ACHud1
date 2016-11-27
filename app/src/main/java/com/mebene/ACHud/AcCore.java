@@ -36,7 +36,7 @@ public class AcCore {
 
     //**********************************************************************************************************************//
     /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
+/*    private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,
@@ -52,9 +52,9 @@ public class AcCore {
             mBound = false;
         }
     };
-
+*/
     //**********************************************************************************************************************//
-    public MedicionDeEntorno getUltimaMedicion() {
+  /*  public MedicionDeEntorno getUltimaMedicion() {
 
         if (mBound) {
             // Call a method from the LocalService.
@@ -65,5 +65,5 @@ public class AcCore {
 
         return ultimaMedicion;
     }
-
+*/
 }

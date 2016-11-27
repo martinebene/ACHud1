@@ -7,22 +7,23 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
-
 import java.util.List;
 
-//import apigopro.core.GoProStatus;
+
 
 public class ServicioAdquisicion2 extends Service implements SensorEventListener {
 
+    static final public String BROADCAST_MEDICION = "com.mebene.ACHud.BROADCAST_MEDICION";
     private MedicionDeEntorno medicion;
     private SensorManager sensorManager;
-    private final IBinder mBinder = new LocalBinder();
-
-    public boolean adquirir=false;
+    AsyncMedicion asyncMedicion;
+    public Context lcontext = this;
+    //private final IBinder mBinder = new LocalBinder();
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,11 +36,11 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i("tag111", "Servicio adquisicion onCreate");
 
-       // asyncMedicion = new AsyncMedicion();
+
+        asyncMedicion = new AsyncMedicion();
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        List<Sensor> listaSensores = sensorManager.getSensorList(Sensor.TYPE_ALL);
+        //List<Sensor> listaSensores = sensorManager.getSensorList(Sensor.TYPE_ALL);
         //medicion = new MedicionDeEntorno(listaSensores);
 
         medicion = new MedicionDeEntorno();
@@ -52,39 +53,19 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        //asyncMedicion.execute();
+        asyncMedicion.execute();
         //return super.onStartCommand(intent, flags, startId);
         Log.i("tag111", "Servicio adquisicion onStart");
-
-        adquirir = true;
-/*
-        //while (adquirir){
-        for(int i=0; i<50 ;i++){
-            try {
-                Log.i("tag111", "I=" + i);
-                Thread.sleep(1000);
-                //Toast.makeText(getApplicationContext(), medicion.toString3(), Toast.LENGTH_LONG).show();
-                Log.i("tag111", "Medicion=" + medicion.toString3());
-            } catch (Exception e) {
-                e.printStackTrace();
-                adquirir=false;
-            }
-        }
-*/
-
-        return START_STICKY;
+        return START_NOT_STICKY;
 
     }
-
-    //**********************************************************************************************************************//
 
 
     //**********************************************************************************************************************//
     @Override
     public void onDestroy() {
-        //asyncMedicion.cancel(true);
+        asyncMedicion.cancel(true);
         Log.i("tag111", "Servicio adquisicion onDestroy");
-        adquirir=false;
         super.onDestroy();
 
     }
@@ -95,8 +76,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         Log.i("tag111", "Servicio adquisicion onTaskRemoved");
-        //asyncMedicion.cancel(true);
-        adquirir=false;
+        asyncMedicion.cancel(true);
         stopSelf();
     }
 
@@ -105,7 +85,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         //throw new UnsupportedOperationException("Not yet implemented");
-        return mBinder;
+        return null;
 
     }
 
@@ -119,8 +99,6 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
         List<Sensor> listSensors;
 
-
-        /*
         listSensors = sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
         if(listSensors.get(0)!= null){
             Sensor magneticSensor = listSensors.get(0);
@@ -130,7 +108,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         }else{
             medicion.campoMagnetico.disponible = false;
         }
-*/
+
         listSensors = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if(listSensors.get(0)!= null){
             Sensor acelerometerSensor = listSensors.get(0);
@@ -140,7 +118,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         }else{
             medicion.aceleracion.disponible = false;
         }
-/*
+
         listSensors = sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE);
         if(listSensors.get(0)!= null){
             Sensor gyroscopeSensor = listSensors.get(0);
@@ -150,7 +128,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         }else{
             medicion.giro.disponible = false;
         }
-*/
+
 
     }
 
@@ -180,7 +158,6 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             }
             //limpiarConsola();
             //agregarTextoAConsola(medicion.toString2());
-            Log.i("tag111", "Medicion=" + medicion.toString3());
         }
 
 
@@ -202,12 +179,78 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
-    public class LocalBinder extends Binder {
+  /*  public class LocalBinder extends Binder {
         ServicioAdquisicion2 getService() {
             // Return this instance of LocalService so clients can call public methods
             return ServicioAdquisicion2.this;
         }
     }
+*/
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //**********************************************************************************************************************//
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private class AsyncMedicion extends AsyncTask<Object, Object, Object> {
+
+        public boolean running=false;
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected Object doInBackground(Object... params) {
+            String msg;
+            running = true;
+            //GoProHelper local_gp_helper = new GoProHelper("10.5.5.9", 80, "martin123456");
+            //GoProHelper local_gp_helper = new GoProHelper();
+            //GoProStatus local_gPStatus= new GoProStatus();
+
+            Log.i("tag111", "AsyncMedicion iniciando");
+            while (running){
+                try {
+                        Thread.sleep(200);
+                        publishProgress();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    running=false;
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate (Object... params) {
+
+            Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
+            Intent intent = new Intent(BROADCAST_MEDICION);
+            intent.putExtra("medicion", medicion.toString3());
+            LocalBroadcastManager.getInstance(lcontext).sendBroadcast(intent);
+           // Toast.makeText(getApplicationContext(), medicion.toString3(), Toast.LENGTH_LONG).show();
+            //Log.i("tag1", "Info que traigo: \n" + local_gPStatus[0].toString());
+
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            Log.i("tag111", "AsyncMedicion onPostExecute");
+            running=false;
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Log.i("tag111", "AsyncMedicion onCancelled");
+            running=false;
+        }
+
+        public boolean isRunning(){
+            return running;
+        }
+
+    }
 
 }
