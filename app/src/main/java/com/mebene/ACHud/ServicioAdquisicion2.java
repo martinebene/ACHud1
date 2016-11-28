@@ -100,7 +100,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         List<Sensor> listSensors;
 
         listSensors = sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
-        if(listSensors.get(0)!= null){
+        if(!listSensors.isEmpty()){
             Sensor magneticSensor = listSensors.get(0);
             sensorManager.registerListener(this, magneticSensor, SensorManager.SENSOR_DELAY_UI);
             medicion.campoMagnetico.disponible = true;
@@ -110,7 +110,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         }
 
         listSensors = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-        if(listSensors.get(0)!= null){
+        if(!listSensors.isEmpty()){
             Sensor acelerometerSensor = listSensors.get(0);
             sensorManager.registerListener(this, acelerometerSensor, SensorManager.SENSOR_DELAY_UI);
             medicion.aceleracion.disponible = true;
@@ -120,7 +120,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         }
 
         listSensors = sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE);
-        if(listSensors.get(0)!= null){
+        if(!listSensors.isEmpty()){
             Sensor gyroscopeSensor = listSensors.get(0);
             sensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_UI);
             medicion.giro.disponible = true;
