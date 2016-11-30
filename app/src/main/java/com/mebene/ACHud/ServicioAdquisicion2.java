@@ -97,6 +97,9 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     //**********************************************************************************************************************//
     private void iniciarSensores() {
 
+
+        medicion.cronometro.activo=true;
+
         List<Sensor> listSensors;
 
         listSensors = sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
@@ -132,12 +135,25 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
     }
 
+    //**********************************************************************************************************************//
+    public static String listarSensores(Context c) {
+
+        String salida="";
+        SensorManager lsensorManager = (SensorManager)c.getSystemService(Context.SENSOR_SERVICE);;
+
+        List<Sensor> listaSensores = lsensorManager.getSensorList(Sensor.TYPE_ALL);
+        for(Sensor sensor: listaSensores) {
+            salida = salida + sensor.getName() + "\n";
+        }
+        return salida;
+    }
 
     //**********************************************************************************************************************//
     @Override
     public void onSensorChanged(SensorEvent evento) {
 
         //Log.i("tag", "entro a sensor changed");
+
 
         synchronized (this) {
             switch(evento.sensor.getType()) {
@@ -204,6 +220,8 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         protected Object doInBackground(Object... params) {
             String msg;
             running = true;
+
+            medicion.cronometro.iniciar();
             //GoProHelper local_gp_helper = new GoProHelper("10.5.5.9", 80, "martin123456");
             //GoProHelper local_gp_helper = new GoProHelper();
             //GoProStatus local_gPStatus= new GoProStatus();
@@ -226,8 +244,10 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         protected void onProgressUpdate (Object... params) {
 
             //Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
+            medicion.cronometro.getTranscurrido();
+
             Intent intent = new Intent(BROADCAST_MEDICION);
-            intent.putExtra("medicion", medicion.toString3());
+            intent.putExtra("medicion", medicion.toString4());
             LocalBroadcastManager.getInstance(lcontext).sendBroadcast(intent);
            // Toast.makeText(getApplicationContext(), medicion.toString3(), Toast.LENGTH_LONG).show();
             //Log.i("tag1", "Info que traigo: \n" + local_gPStatus[0].toString());

@@ -26,7 +26,7 @@ import com.mebene.ACHud.MainActivity;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class Fm_cam_generica extends Fragment {
 
-AcCore acCore;
+    AcCore acCore;
     TextView tV_Status;
     EditText eT_Consola;
     Button bt1, bt2, bt3;
@@ -77,8 +77,14 @@ AcCore acCore;
                 eT_Consola.setText("detenido");
             }
         });
-    }
 
+        bt3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                eT_Consola.setText(ServicioAdquisicion2.listarSensores(getActivity()));
+                //eT_Consola.setText("caca");
+            }
+        });
+    }
 
 
 

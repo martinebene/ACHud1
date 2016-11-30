@@ -16,7 +16,7 @@ public class AcCore {
     public boolean adquiriendo;
     ServicioAdquisicion2 mService;
     MedicionDeEntorno ultimaMedicion;
-    boolean mBound = false;
+
     public String string_prueba;
 
     public AcCore(Context lcontext) {
@@ -24,11 +24,6 @@ public class AcCore {
         context = lcontext;
         adquiriendo = false;
         ultimaMedicion = null;
-        mBound = false;
-        // Bind to LocalService
-        //Intent intentServicioAdquisicion = new Intent(context, ServicioAdquisicion2.class);
-        //context.bindService(intentServicioAdquisicion, mConnection, Context.BIND_AUTO_CREATE);
-
 
     }
 

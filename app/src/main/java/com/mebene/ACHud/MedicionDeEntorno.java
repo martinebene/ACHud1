@@ -1,6 +1,9 @@
 package com.mebene.ACHud;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Martin on 01/07/2015.
@@ -57,11 +60,22 @@ public class MedicionDeEntorno {
     public String toString2() {
         return aceleracion + "\n"+
                giro + "\n"+
-               campoMagnetico;
+               campoMagnetico +"\n"+
+                cronometro;
     }
 
     public String toString3() {
         return aceleracion.toString();
+    }
+
+    public String toString4() {
+        String salida="";
+        if(aceleracion.activo) salida = salida + aceleracion + "\n";
+        if(giro.activo) salida = salida + giro + "\n";
+        if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
+        if(cronometro.activo) salida = salida + cronometro + "\n";
+
+        return salida;
     }
 }
 
@@ -75,11 +89,14 @@ class Aceleracion {
     float x,y,z,ax,ay,az,maxX,maxY,maxZ,minX,minY,minZ;
     float [] gravity;
     final float alpha = 0.8f;
+    final int delayMax = 30;
+    int i;
 
     Aceleracion(boolean ldisponible, boolean lactivo) {
         activo = lactivo;
         disponible = ldisponible;
         x=y=z=ax=ay=az=maxX=maxY=maxZ=minX=minY=minZ=0;
+        i=0;
         gravity = new float[3];
         gravity[0] = 0f;
         gravity[1] = 0f;
@@ -99,12 +116,15 @@ class Aceleracion {
         y = ly - gravity[1];
         z = lz - gravity[2];
 
-        if(x>maxX) maxX=x;
-        if(y>maxY) maxY=y;
-        if(z>maxZ) maxZ=z;
-        if(x<minX) minX=x;
-        if(y<minY) minY=y;
-        if(z<minZ) minZ=z;
+        if(i>delayMax) {
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+            if (z > maxZ) maxZ = z;
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (z < minZ) minZ = z;
+        }
+        i++;
     }
 
     @Override
@@ -224,27 +244,41 @@ class Clima {
 class Cronometro {
 
     boolean activo, disponible;
-    public long t0;
+    public long t0, transcurrido;
 
 
     Cronometro(boolean ldisponible, boolean lactivo) {
         activo = lactivo;
         disponible = ldisponible;
-        t0=0;
+        t0=transcurrido=0;
     }
 
-    void iniciar(long lt0){
-        t0=lt0;
+    void iniciar(){
+        t0=System.currentTimeMillis();
     }
 
-    long getTranscurrido(long t1) {
-        return t1-t0;
+    long getTranscurrido() {
+        transcurrido = System.currentTimeMillis()-t0;
+        return transcurrido;
     }
 
     @Override
     public String toString() {
-        return "Cronometro{" +
-                "t0=" + t0 +
-                '}';
+
+       // Date date = new Date(this.getTranscurrido());
+       //return date.toString();
+
+        //SimpleDateFormat df= new SimpleDateFormat("hh:mm:ss");
+        //String formatted = df.format(date );
+        long millis = this.getTranscurrido();
+        String formatted = String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(millis),
+                TimeUnit.MILLISECONDS.toMinutes(millis) -
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
+                TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+        return "Cronometro: " + formatted;
     }
+
+
 }
