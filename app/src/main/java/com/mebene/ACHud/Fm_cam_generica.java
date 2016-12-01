@@ -29,7 +29,7 @@ public class Fm_cam_generica extends Fragment {
     AcCore acCore;
     TextView tV_Status;
     EditText eT_Consola;
-    Button bt1, bt2, bt3;
+    ImageButton ibRec, ibStop, ibSyncro, ibAyudaInterface;
 
     public Fm_cam_generica() {
     }
@@ -61,27 +61,34 @@ public class Fm_cam_generica extends Fragment {
         LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(mMessageReceiver,
                 new IntentFilter(ServicioAdquisicion2.BROADCAST_MEDICION));
 
-        bt1 = (Button) getView().findViewById(R.id.bt1);
-        bt2 = (Button) getView().findViewById(R.id.bt2);
-        bt3 = (Button) getView().findViewById(R.id.bt3);
+        ibRec = (ImageButton) getView().findViewById(R.id.ibRec);
+        ibStop = (ImageButton) getView().findViewById(R.id.ibStop);
+        ibSyncro = (ImageButton) getView().findViewById(R.id.ibSyncro);
+        ibAyudaInterface = (ImageButton) getView().findViewById(R.id.ibAyudaInterface);
 
-        bt1.setOnClickListener(new View.OnClickListener() {
+        ibRec.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 acCore.iniciarAdquisicion();
             }
         });
 
-        bt2.setOnClickListener(new View.OnClickListener() {
+        ibStop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 acCore.detenerAdquisicion();
                 eT_Consola.setText("detenido");
             }
         });
 
-        bt3.setOnClickListener(new View.OnClickListener() {
+        ibSyncro.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 eT_Consola.setText(ServicioAdquisicion2.listarSensores(getActivity()));
                 //eT_Consola.setText("caca");
+            }
+        });
+
+        ibAyudaInterface.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                eT_Consola.setText("caca");
             }
         });
     }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -14,7 +15,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="3.5"
             android:id="@+id/tV_Status" />
 
         <EditText
@@ -23,42 +24,63 @@
             android:layout_weight="1"
             android:id="@+id/eT_Consola"
             android:background="@color/background_floating_material_light"
-            android:textColor="?android:attr/colorActivatedHighlight"
+            android:textColor="@color/texto_obscuro"
             android:textSize="@dimen/abc_text_size_small_material"
             android:scrollHorizontally="false"
             android:clickable="false"
-            android:editable="false"
-            android:isScrollContainer="true" />
+            android:isScrollContainer="true"
+            android:layout_margin="10dp" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="3">
 
-            <Button
-                android:text="Button 1"
+            <ImageButton
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                app:srcCompat="@drawable/ic_action_record"
+                android:id="@+id/ibRec"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:adjustViewBounds="true"
+ />
+
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/bt1"
+                app:srcCompat="@drawable/ic_action_playback_stop"
+                android:id="@+id/ibStop"
                 android:layout_weight="1"
-                android:layout_gravity="center_vertical|center_horizontal" />
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:adjustViewBounds="true"
+/>
 
-            <Button
-                android:text="Button 2"
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/bt2"
+                app:srcCompat="@drawable/ic_action_reload"
+                android:id="@+id/ibSyncro"
                 android:layout_weight="1"
-                android:layout_gravity="center_vertical|center_horizontal" />
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:adjustViewBounds="true"
+ />
 
-            <Button
-                android:text="Button 3"
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/bt3"
+                app:srcCompat="@drawable/ic_action_help"
+                android:id="@+id/ibAyudaInterface"
                 android:layout_weight="1"
-                android:layout_gravity="center_vertical|center_horizontal" />
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:adjustViewBounds="true"
+ />
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

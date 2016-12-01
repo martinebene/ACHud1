@@ -9,6 +9,8 @@
     <color name="turquesa_claro">#58D3F7</color>
     <color name="blanco">#ffffff</color>
     <color name="texto_clarito"> #E6E6E6</color>
+    <color name="texto_obscuro">#2e2e2e</color>
+    <color name="texto_destacado"> #ff0000</color>
     <color name="azul">#08088A</color>
 
 </resources>
