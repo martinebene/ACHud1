@@ -19,6 +19,7 @@ public class MedicionDeEntorno {
     CampoMagnetico campoMagnetico;
     Clima clima;
     Cronometro cronometro;
+    String vel;
 
 
     //**********************************************************************************************************************//
@@ -39,6 +40,7 @@ public class MedicionDeEntorno {
         campoMagnetico=new CampoMagnetico(false, false);
         clima=new Clima(false, false);
         cronometro=new Cronometro(false, false);
+        vel = "";
     }
 
     @Override
@@ -74,6 +76,7 @@ public class MedicionDeEntorno {
         if(giro.activo) salida = salida + giro + "\n";
         if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
         if(cronometro.activo) salida = salida + cronometro + "\n";
+        salida = salida + vel + "\n"; //corregir esto feo...
 
         return salida;
     }

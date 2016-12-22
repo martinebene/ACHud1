@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/lib/com.mebene.ACHud"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -40,7 +40,7 @@
             <ImageButton
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                app:srcCompat="@drawable/ic_action_record"
+                android:src="@drawable/ic_action_record"
                 android:id="@+id/ibRec"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical|center_horizontal"
@@ -52,7 +52,7 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_action_playback_stop"
+                android:src="@drawable/ic_action_playback_stop"
                 android:id="@+id/ibStop"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical|center_horizontal"
@@ -63,7 +63,7 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_action_reload"
+                android:src="@drawable/ic_action_reload"
                 android:id="@+id/ibSyncro"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical|center_horizontal"
@@ -74,7 +74,7 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_action_help"
+                android:src="@drawable/ic_action_help"
                 android:id="@+id/ibAyudaInterface"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical|center_horizontal"

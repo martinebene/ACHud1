@@ -7,16 +7,21 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 
 
-
-public class ServicioAdquisicion2 extends Service implements SensorEventListener {
+public class ServicioAdquisicion2 extends Service implements SensorEventListener, IBaseGpsListener {
 
     static final public String BROADCAST_MEDICION = "com.mebene.ACHud.BROADCAST_MEDICION";
     private MedicionDeEntorno medicion;
@@ -99,6 +104,11 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
 
         medicion.cronometro.activo=true;
+
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        this.updateSpeed(null);
+
 
         List<Sensor> listSensors;
 
@@ -184,6 +194,54 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     //**********************************************************************************************************************//
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (location != null)
+        {
+            this.updateSpeed(location);
+        }
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onGpsStatusChanged(int event) {
+
+    }
+
+    //**********************************************************************************************************************//
+    public void updateSpeed(Location location)
+    {
+        float nCurrentSpeed = 0;
+
+        if( location!=null )
+        {
+            nCurrentSpeed = location.getSpeed();
+        }
+
+        Formatter fmt = new Formatter(new StringBuilder());
+        fmt.format(Locale.US, "%5.1f", nCurrentSpeed);
+        String strCurrentSpeed = fmt.toString();
+        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
+
+        String strUnits = "meters/second";
+        medicion.vel = strCurrentSpeed + " " + strUnits;
 
     }
 
