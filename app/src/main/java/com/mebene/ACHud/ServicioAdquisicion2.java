@@ -240,7 +240,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         String strCurrentSpeed = fmt.toString();
         strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
 
-        String strUnits = "meters/second";
+        String strUnits = "Km/h";
         medicion.vel = strCurrentSpeed + " " + strUnits;
 
     }
