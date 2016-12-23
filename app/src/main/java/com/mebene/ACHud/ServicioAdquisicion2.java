@@ -232,7 +232,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
         if( location!=null )
         {
-            nCurrentSpeed = location.getSpeed();
+            nCurrentSpeed = location.getSpeed() * 36;
         }
 
         Formatter fmt = new Formatter(new StringBuilder());
