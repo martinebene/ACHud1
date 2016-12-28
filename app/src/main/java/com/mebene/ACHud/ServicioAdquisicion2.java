@@ -108,6 +108,8 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         this.updateSpeed(null);
+        medicion.velocidad.disponible = true;
+        medicion.velocidad.activo = true;
 
 
         List<Sensor> listSensors;
