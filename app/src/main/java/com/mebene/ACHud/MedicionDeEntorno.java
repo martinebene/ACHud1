@@ -3,6 +3,8 @@ package com.mebene.ACHud;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Formatter;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -12,14 +14,16 @@ import java.util.concurrent.TimeUnit;
 public class MedicionDeEntorno {
 
     Calendar fechaYhora;
-    float velocidad, velocidadMaxima, velocidadPromedio;
     long cantMediciiones;
     Aceleracion aceleracion;
     Giro giro;
     CampoMagnetico campoMagnetico;
     Clima clima;
     Cronometro cronometro;
-    String vel;
+    Velocidad velocidad;
+    public static final int KMH=0, MPH=1, MS=2, MKM=3, MM=4;
+
+
 
 
     //**********************************************************************************************************************//
@@ -33,14 +37,13 @@ public class MedicionDeEntorno {
         }
 */
         fechaYhora = Calendar.getInstance();
-        velocidad=velocidadMaxima=velocidadPromedio=0;
+        velocidad = new Velocidad(false, false, MedicionDeEntorno.KMH);
         cantMediciiones=0;
         aceleracion= new Aceleracion(false, false);
         giro=new Giro(false, false);
         campoMagnetico=new CampoMagnetico(false, false);
         clima=new Clima(false, false);
         cronometro=new Cronometro(false, false);
-        vel = "";
     }
 
     @Override
@@ -48,8 +51,8 @@ public class MedicionDeEntorno {
         return "medicionDeEntorno{" +
                 "fechaYhora=" + fechaYhora +
                 ", velocidad=" + velocidad +
-                ", velocidadMaxima=" + velocidadMaxima +
-                ", velocidadPromedio=" + velocidadPromedio +
+                ", velocidadMaxima=" + velocidad.velocidadMaxima +
+                ", velocidadPromedio=" + velocidad.velocidadPromedio +
                 ", cantMediciiones=" + cantMediciiones +
                 ", acelecarion=" + aceleracion +
                 ", giro=" + giro +
@@ -76,7 +79,7 @@ public class MedicionDeEntorno {
         if(giro.activo) salida = salida + giro + "\n";
         if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
         if(cronometro.activo) salida = salida + cronometro + "\n";
-        salida = salida + vel + "\n"; //corregir esto feo...
+        if(velocidad.activo) salida = salida + velocidad + "\n";
 
         return salida;
     }
@@ -87,7 +90,7 @@ public class MedicionDeEntorno {
 class Aceleracion {
 
     public long timestamp;
-    boolean activo, disponible;
+    public boolean activo, disponible;
 
     float x,y,z,ax,ay,az,maxX,maxY,maxZ,minX,minY,minZ;
     float [] gravity;
@@ -143,7 +146,7 @@ class Aceleracion {
 class Giro {
 
     public long timestamp;
-    boolean activo, disponible;
+    public boolean activo, disponible;
 
     float x,y,z,ax,ay,az,maxX,maxY,maxZ,minX,minY,minZ;
 
@@ -181,7 +184,7 @@ class Giro {
 class CampoMagnetico {
 
     public long timestamp;
-    boolean activo, disponible;
+    public boolean activo, disponible;
 
     float x,y,z,ax,ay,az,maxX,maxY,maxZ,minX,minY,minZ;
 
@@ -219,7 +222,7 @@ class CampoMagnetico {
 class Clima {
 
     public long timestamp;
-    boolean activo, disponible;
+    public boolean activo, disponible;
 
     String temp, presion, humedad, intensidadViento, direViento, locacion;
 
@@ -246,7 +249,7 @@ class Clima {
 //**********************************************************************************************************************//
 class Cronometro {
 
-    boolean activo, disponible;
+    public boolean activo, disponible;
     public long t0, transcurrido;
 
 
@@ -283,5 +286,58 @@ class Cronometro {
         return "Cronometro: " + formatted;
     }
 
+
+}
+
+//**********************************************************************************************************************//
+class Velocidad {
+
+    public boolean activo, disponible;
+    public double velocidad, velocidadMaxima, velocidadPromedio;
+    int unidad;
+    public String strUnidad="";
+
+    Velocidad(boolean ldisponible, boolean lactivo, int l_unidad) {
+        activo = lactivo;
+        disponible = ldisponible;
+        velocidad = velocidadMaxima = velocidadPromedio = 0;
+        unidad=l_unidad;
+
+        switch (unidad) {
+            case MedicionDeEntorno.KMH: strUnidad = "Km/h"; break;
+            case MedicionDeEntorno.MPH: strUnidad = "Millas/h"; break;
+            case MedicionDeEntorno.MS: strUnidad = "m/s"; break;
+            case MedicionDeEntorno.MKM: strUnidad = "min/km"; break;
+            case MedicionDeEntorno.MM: strUnidad = "min/milla"; break;
+        }
+    }
+
+
+    public void setVelocidad (double velMedida) {
+
+            switch (unidad) {
+                case MedicionDeEntorno.KMH:
+                    velocidad = velMedida * 3.6; break;
+                case MedicionDeEntorno.MPH:
+                    velocidad = velMedida * 2.23694; break;
+                case MedicionDeEntorno.MS:
+                    velocidad = velMedida; break;
+                case MedicionDeEntorno.MKM:
+                    velocidad = (3600/(velMedida * 3.6))/60; break;
+                case MedicionDeEntorno.MM:
+                    velocidad = (3600/(velMedida * 2.23694))/60; break;
+            }
+    }
+
+    @Override
+    public String toString() {
+
+        Formatter fmt = new Formatter(new StringBuilder());
+        fmt.format(Locale.US, "%5.1f", velocidad);
+        String strCurrentSpeed = fmt.toString();
+        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
+
+        return strCurrentSpeed + strUnidad;
+    }
 
 }

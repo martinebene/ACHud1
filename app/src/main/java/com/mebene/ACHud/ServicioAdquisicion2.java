@@ -228,20 +228,17 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     //**********************************************************************************************************************//
     public void updateSpeed(Location location)
     {
-        float nCurrentSpeed = 0;
+        double nCurrentSpeed = 0;
 
         if( location!=null )
         {
-            nCurrentSpeed = location.getSpeed() * 36;
+            nCurrentSpeed = location.getSpeed();
         }
 
-        Formatter fmt = new Formatter(new StringBuilder());
-        fmt.format(Locale.US, "%5.1f", nCurrentSpeed);
-        String strCurrentSpeed = fmt.toString();
-        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
 
-        String strUnits = "Km/h";
-        medicion.vel = strCurrentSpeed + " " + strUnits;
+
+        //String strUnits = "Km/h";
+        medicion.velocidad.velocidad = nCurrentSpeed;
 
     }
 
