@@ -78,7 +78,7 @@ public class MedicionDeEntorno {
         if(aceleracion.activo) salida = salida + aceleracion + "\n";
         if(giro.activo) salida = salida + giro + "\n";
         if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
-        if(cronometro.activo) salida = salida + cronometro + "\n";
+        if(cronometro.activo) salida = salida + cronometro + "\n\n";
         if(velocidad.activo) salida = salida + velocidad + "\n";
 
         return salida;
