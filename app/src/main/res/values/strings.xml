@@ -24,4 +24,12 @@
     <string name="s_menu_acerca_de">Acerca de</string>
     <string name="s_captura">Captura de datos y video</string>
     <string name="s_datos">Administra los datos capturados</string>
+    <string name="settings_titulo_categoria_generales">Generales</string>
+    <string name="settings_titulo_categoria_sensores">Sensores</string>
+    <string name="velocidad">Velocidad</string>
+    <string name="s_unidades_de_velocidad">Unidades de velocidad</string>
+    <string name="s_acelerometro">Acelerometro</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

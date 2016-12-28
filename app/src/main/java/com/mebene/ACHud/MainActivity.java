@@ -395,7 +395,7 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case 5:
                 Log.e("Aviso", "Entre en dv1 con pos: " + position);
-                fragment = new Fm_2();
+                fragment = new Fm_settings();
                 mDrawerTitle = getResources().getString(R.string.menu_configuracion);
                 mTitle = getResources().getString(R.string.s_menu_aplicacion);
                 mDrawerExpandableList.clearChoices();
