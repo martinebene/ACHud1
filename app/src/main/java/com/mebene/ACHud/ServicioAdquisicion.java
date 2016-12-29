@@ -42,7 +42,7 @@ public class ServicioAdquisicion extends Service implements SensorEventListener 
         List<Sensor> listaSensores = sensorManager.getSensorList(Sensor.TYPE_ALL);
         //medicion = new MedicionDeEntorno(listaSensores);
 
-        medicion = new MedicionDeEntorno();
+       // medicion = new MedicionDeEntorno();
         iniciarSensores();
 
     }

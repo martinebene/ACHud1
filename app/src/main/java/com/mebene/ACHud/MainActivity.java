@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -69,6 +70,7 @@ public class MainActivity extends ActionBarActivity {
         View footer = getLayoutInflater().inflate(R.layout.pie_pagina, null);
         mDrawerExpandableList.addFooterView(footer, null, false);
 
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
         acCore = new AcCore(this);
 

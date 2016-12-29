@@ -1,5 +1,7 @@
 package com.mebene.ACHud;
 
+import android.content.SharedPreferences;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +23,7 @@ public class MedicionDeEntorno {
     Clima clima;
     Cronometro cronometro;
     Velocidad velocidad;
+    SharedPreferences sharedPref;
     public static final int KMH=0, MPH=1, MS=2, MKM=3, MM=4;
 
 
@@ -28,7 +31,7 @@ public class MedicionDeEntorno {
 
     //**********************************************************************************************************************//
 //    public MedicionDeEntorno(List<Sensor> listaSensores) {
-        public MedicionDeEntorno() {
+        public MedicionDeEntorno(SharedPreferences l_sharedPref) {
 
 
 /*
@@ -36,8 +39,12 @@ public class MedicionDeEntorno {
             Log.i("tag", sensor.getName());
         }
 */
+        sharedPref = l_sharedPref;
         fechaYhora = Calendar.getInstance();
-        velocidad = new Velocidad(false, false, MedicionDeEntorno.KMH);
+
+
+
+        velocidad = new Velocidad(false, false, sharedPref.getString("list_preference_unidades", "Km/h"));
         cantMediciiones=0;
         aceleracion= new Aceleracion(false, false);
         giro=new Giro(false, false);
@@ -295,21 +302,37 @@ class Velocidad {
     public boolean activo, disponible;
     public double velocidad, velocidadMaxima, velocidadPromedio;
     int unidad;
-    public String strUnidad="";
+    public String strUnidad;
 
-    Velocidad(boolean ldisponible, boolean lactivo, int l_unidad) {
+    Velocidad(boolean ldisponible, boolean lactivo, String l_strUnidad) {
         activo = lactivo;
         disponible = ldisponible;
         velocidad = velocidadMaxima = velocidadPromedio = 0;
-        unidad=l_unidad;
+        //unidad=l_unidad;
+        strUnidad=l_strUnidad;
 
-        switch (unidad) {
+        switch (strUnidad) {
+            case "Km/h": unidad = MedicionDeEntorno.KMH; break;
+            case "Millas/h": unidad = MedicionDeEntorno.MPH; break;
+            case "m/s": unidad = MedicionDeEntorno.MS; break;
+            case "min/km": unidad = MedicionDeEntorno.MKM; break;
+            case "min/milla": unidad = MedicionDeEntorno.MM; break;
+            default:
+                unidad = MedicionDeEntorno.KMH;
+                strUnidad="Km/h";
+                break;
+        }
+
+
+        /*
+        *         switch (unidad) {
             case MedicionDeEntorno.KMH: strUnidad = "Km/h"; break;
             case MedicionDeEntorno.MPH: strUnidad = "Millas/h"; break;
             case MedicionDeEntorno.MS: strUnidad = "m/s"; break;
             case MedicionDeEntorno.MKM: strUnidad = "min/km"; break;
             case MedicionDeEntorno.MM: strUnidad = "min/milla"; break;
         }
+        * */
     }
 
 
@@ -333,7 +356,7 @@ class Velocidad {
     public String toString() {
 
         Formatter fmt = new Formatter(new StringBuilder());
-        fmt.format(Locale.US, "%5.1f", velocidad);
+        fmt.format("%4.1f", velocidad);
         String strCurrentSpeed = fmt.toString();
         strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
 

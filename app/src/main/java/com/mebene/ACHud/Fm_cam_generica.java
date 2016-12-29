@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ public class Fm_cam_generica extends Fragment {
         super.onResume();
 
         eT_Consola = (EditText) getView().findViewById(R.id.eT_Consola);
+        //eT_Consola.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
 
         LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(mMessageReceiver,
                 new IntentFilter(ServicioAdquisicion2.BROADCAST_MEDICION));

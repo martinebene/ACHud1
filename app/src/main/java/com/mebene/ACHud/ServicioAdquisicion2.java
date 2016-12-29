@@ -3,6 +3,7 @@ package com.mebene.ACHud;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -28,6 +30,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     private SensorManager sensorManager;
     AsyncMedicion asyncMedicion;
     public Context lcontext = this;
+    SharedPreferences sharedPref;
     //private final IBinder mBinder = new LocalBinder();
 
 
@@ -44,12 +47,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
 
         asyncMedicion = new AsyncMedicion();
-        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        //List<Sensor> listaSensores = sensorManager.getSensorList(Sensor.TYPE_ALL);
-        //medicion = new MedicionDeEntorno(listaSensores);
 
-        medicion = new MedicionDeEntorno();
-        iniciarSensores();
 
     }
 
@@ -58,6 +56,16 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+
+        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        medicion = new MedicionDeEntorno(sharedPref);
+
+        iniciarSensores();
+
+
         asyncMedicion.execute();
         //return super.onStartCommand(intent, flags, startId);
         Log.i("tag111", "Servicio adquisicion onStart");
@@ -108,8 +116,8 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         this.updateSpeed(null);
-        medicion.velocidad.disponible = true;
-        medicion.velocidad.activo = true;
+        medicion.velocidad.disponible = true; //meter en una condicion si gps disponible
+        medicion.velocidad.activo = sharedPref.getBoolean("check_box_preference_velocidad",true);;
 
 
         List<Sensor> listSensors;
@@ -119,7 +127,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             Sensor magneticSensor = listSensors.get(0);
             sensorManager.registerListener(this, magneticSensor, SensorManager.SENSOR_DELAY_UI);
             medicion.campoMagnetico.disponible = true;
-            medicion.campoMagnetico.activo = true;
+            medicion.campoMagnetico.activo = sharedPref.getBoolean("check_box_preference_magnetico",true);
         }else{
             medicion.campoMagnetico.disponible = false;
         }
@@ -129,7 +137,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             Sensor acelerometerSensor = listSensors.get(0);
             sensorManager.registerListener(this, acelerometerSensor, SensorManager.SENSOR_DELAY_UI);
             medicion.aceleracion.disponible = true;
-            medicion.aceleracion.activo = true;
+            medicion.aceleracion.activo = sharedPref.getBoolean("check_box_preference_acelerometro",true);
         }else{
             medicion.aceleracion.disponible = false;
         }
@@ -139,7 +147,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             Sensor gyroscopeSensor = listSensors.get(0);
             sensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_UI);
             medicion.giro.disponible = true;
-            medicion.giro.activo = true;
+            medicion.giro.activo = sharedPref.getBoolean("check_box_preference_giro",true);
         }else{
             medicion.giro.disponible = false;
         }

@@ -6,7 +6,7 @@
 
     </PreferenceCategory>
     <ListPreference
-        android:defaultValue="1"
+        android:defaultValue="Km/h"
         android:title="@string/s_unidades_de_velocidad"
         android:entries="@array/entradasUnidadesDeVelocidad"
         android:entryValues="@array/valoresUnidadesDeVelocidad"
@@ -15,11 +15,23 @@
 
     </PreferenceCategory>
     <CheckBoxPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:title="@string/velocidad"
         android:key="check_box_preference_velocidad" />
     <CheckBoxPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:title="@string/s_acelerometro"
         android:key="check_box_preference_acelerometro" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:title="@string/s_giroscopo"
+        android:key="check_box_preference_giro" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:title="@string/s_magnetico"
+        android:key="check_box_preference_magnetico" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:title="@string/s_cronometro"
+        android:key="check_box_preference_cronometro" />
 </PreferenceScreen>

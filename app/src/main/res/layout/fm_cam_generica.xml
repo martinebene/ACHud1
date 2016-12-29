@@ -29,7 +29,8 @@
             android:scrollHorizontally="false"
             android:clickable="false"
             android:isScrollContainer="true"
-            android:layout_margin="10dp" />
+            android:layout_margin="10dp"
+            android:focusable="false" />
 
         <LinearLayout
             android:orientation="horizontal"
