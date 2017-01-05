@@ -63,6 +63,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
         medicion = new MedicionDeEntorno(sharedPref);
 
+
         iniciarSensores();
 
 
@@ -244,11 +245,8 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         {
             nCurrentSpeed = location.getSpeed();
         }
-
-
-
         //String strUnits = "Km/h";
-        medicion.velocidad.velocidad = nCurrentSpeed;
+        medicion.velocidad.setVelocidad(nCurrentSpeed);
 
     }
 

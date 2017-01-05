@@ -1,6 +1,7 @@
 package com.mebene.ACHud;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -312,15 +313,15 @@ class Velocidad {
         strUnidad=l_strUnidad;
 
         switch (strUnidad) {
-            case "Km/h": unidad = MedicionDeEntorno.KMH; break;
-            case "Millas/h": unidad = MedicionDeEntorno.MPH; break;
-            case "m/s": unidad = MedicionDeEntorno.MS; break;
-            case "min/km": unidad = MedicionDeEntorno.MKM; break;
-            case "min/milla": unidad = MedicionDeEntorno.MM; break;
+            case "Km/h": unidad = MedicionDeEntorno.KMH; Log.e("Aviso2", "Entre en kmh: " + unidad + " y str: " + strUnidad);break;
+            case "Millas/h": unidad = MedicionDeEntorno.MPH; Log.e("Aviso2", "Entre en mph: " + unidad + " y str: " + strUnidad);break;
+            case "m/s": unidad = MedicionDeEntorno.MS; Log.e("Aviso2", "Entre en m/s: " + unidad + " y str: " + strUnidad);break;
+            case "min/km": unidad = MedicionDeEntorno.MKM;Log.e("Aviso2", "Entre en min/km: " + unidad + " y str: " + strUnidad);break;
+            case "min/milla": unidad = MedicionDeEntorno.MM;Log.e("Aviso2", "Entre en min/milla: " + unidad + " y str: " + strUnidad);break;
             default:
                 unidad = MedicionDeEntorno.KMH;
                 strUnidad="Km/h";
-                break;
+                Log.e("Aviso2", "Entre en default: " + unidad + " y str: " + strUnidad);break;
         }
 
 
@@ -338,17 +339,19 @@ class Velocidad {
 
     public void setVelocidad (double velMedida) {
 
+        Log.e("Aviso2", "Entre en set vel con velmedida: " + velMedida );
+
             switch (unidad) {
                 case MedicionDeEntorno.KMH:
-                    velocidad = velMedida * 3.6; break;
+                    velocidad = velMedida * 3.6; Log.e("Aviso2", "Entre en kmh: " + unidad + " y str: " + strUnidad);break;
                 case MedicionDeEntorno.MPH:
-                    velocidad = velMedida * 2.23694; break;
+                    velocidad = velMedida * 2.23694; Log.e("Aviso2", "Entre en mph: " + unidad + " y str: " + strUnidad);break;
                 case MedicionDeEntorno.MS:
-                    velocidad = velMedida; break;
+                    velocidad = velMedida; Log.e("Aviso2", "Entre en m/s: " + unidad + " y str: " + strUnidad);break;
                 case MedicionDeEntorno.MKM:
-                    velocidad = (3600/(velMedida * 3.6))/60; break;
+                    velocidad = (3600/(velMedida * 3.6))/60; Log.e("Aviso2", "Entre en min/km: " + unidad + " y str: " + strUnidad);break;
                 case MedicionDeEntorno.MM:
-                    velocidad = (3600/(velMedida * 2.23694))/60; break;
+                    velocidad = (3600/(velMedida * 2.23694))/60; Log.e("Aviso2", "Entre en min/milla: " + unidad + " y str: " + strUnidad);break;
             }
     }
 

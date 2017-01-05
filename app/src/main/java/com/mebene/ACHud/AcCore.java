@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by Martin on 03/04/2016.
@@ -29,7 +30,12 @@ public class AcCore {
 
     public void iniciarAdquisicion(){
         Log.i("tag111", "iniciarAdquisicion");
-        context.startService(new Intent(context, ServicioAdquisicion2.class));
+        try {
+            context.startService(new Intent(context, ServicioAdquisicion2.class));
+        } catch (Exception e){
+            Toast toast = Toast.makeText(context, R.string.s_mensaje_servicio_en_ejecucion, Toast.LENGTH_LONG);
+            toast.show();
+        }
 
     }
 

@@ -29,6 +29,7 @@
     <string name="velocidad">Velocidad</string>
     <string name="s_unidades_de_velocidad">Unidades de velocidad</string>
     <string name="s_acelerometro">Acelerometro</string>
+    <string name="s_mensaje_servicio_en_ejecucion">Medicion en ejecucion, debes detener la medicion antes de inciar una nueva</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
