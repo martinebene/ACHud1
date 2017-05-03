@@ -13,11 +13,17 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Calendar;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
@@ -78,7 +84,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     //**********************************************************************************************************************//
     @Override
     public void onDestroy() {
-        asyncMedicion.cancel(true);
+        asyncMedicion.stop();
         Log.i("tag111", "Servicio adquisicion onDestroy");
         super.onDestroy();
 
@@ -274,32 +280,60 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
         public boolean running=false;
 
+        OutputStreamWriter fout;
+        String filename_out=null;
         @Override
         protected void onPreExecute() {
 
+            Calendar c = Calendar.getInstance();
+            filename_out = "ACHUD_Out_" + c.get(Calendar.DAY_OF_MONTH)+"_"+
+                    c.get(Calendar.MONTH)+"_"+
+                    c.get(Calendar.YEAR)+"_"+
+                    c.get(Calendar.HOUR_OF_DAY)+"_"+
+                    c.get(Calendar.MINUTE)+"_"+
+                    c.get(Calendar.SECOND)+".csv";
+            try {
+
+                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                    File ruta_sd = Environment.getExternalStorageDirectory();
+                    File ruta_app_dir = new File(ruta_sd.getAbsolutePath(), getResources().getString(R.string.app_name));
+                    if (!ruta_app_dir.exists()) {
+                        ruta_app_dir.mkdir();
+                    }
+                    File f = new File(ruta_app_dir.getAbsolutePath(),filename_out);
+                    fout = new OutputStreamWriter(new FileOutputStream(f));
+
+                } else{
+                    this.cancel(true);
+                    stopSelf();
+                    Log.e("tag23", "no disponible alamacenamiento externo");
+                }
+            }
+            catch (Exception ex){
+                Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+            }
         }
 
         @Override
         protected Object doInBackground(Object... params) {
             String msg;
-            running = true;
 
+            if (isCancelled()){
+                return null;
+            }
+            running = true;
             medicion.cronometro.iniciar();
-            //GoProHelper local_gp_helper = new GoProHelper("10.5.5.9", 80, "martin123456");
-            //GoProHelper local_gp_helper = new GoProHelper();
-            //GoProStatus local_gPStatus= new GoProStatus();
 
             Log.i("tag111", "AsyncMedicion iniciando");
             while (running){
                 try {
-                        Thread.sleep(200);
+                        Thread.sleep(100);
                         publishProgress();
                 } catch (Exception e) {
                     e.printStackTrace();
                     running=false;
                 }
             }
-
             return null;
         }
 
@@ -308,6 +342,14 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
             //Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
             medicion.cronometro.getTranscurrido();
+            try {
+                fout.write(medicion.toCVS());
+
+            } catch (IOException e) {
+                Log.e("Ficheros", "Error al escribir fichero a memoria interna linea");
+                e.printStackTrace();
+            }
+
 
             Intent intent = new Intent(BROADCAST_MEDICION);
             intent.putExtra("medicion", medicion.toString4());
@@ -320,6 +362,12 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         @Override
         protected void onPostExecute(Object o) {
             Log.i("tag111", "AsyncMedicion onPostExecute");
+            try {
+                fout.flush();
+                fout.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             running=false;
         }
 
@@ -332,6 +380,10 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
         public boolean isRunning(){
             return running;
+        }
+
+        public void stop(){
+            this.running=false;
         }
 
     }

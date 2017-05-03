@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.mebene.ACHud.MainActivity;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Vector;
 
 /**
  * Created by miguelmorales on 17/4/15.
@@ -90,7 +97,25 @@ public class Fm_cam_generica extends Fragment {
 
         ibAyudaInterface.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                eT_Consola.setText("caca");
+                /*Vector<String> result = new Vector<String>();
+                try {
+                    FileInputStream f = getActivity().openFileInput("prueba_int.txt");
+                    BufferedReader entrada = new BufferedReader(
+                            new InputStreamReader(f));
+                    int n = 0;
+                    String linea;
+                    do {
+                        linea = entrada.readLine();
+                        if (linea != null) {
+                            result.add(linea);
+                            n++;
+                        }
+                    } while (linea != null);
+                    f.close();
+                } catch (Exception e) {
+                    Log.e("Asteroides", e.getMessage(), e);
+                }*/
+                eT_Consola.setText(/*result.toString()*/"pedo");
             }
         });
     }
@@ -103,6 +128,7 @@ public class Fm_cam_generica extends Fragment {
             eT_Consola.setText(intent.getStringExtra("medicion"));
         }
     };
+
 
     @Override
     public void onDestroy() {

@@ -91,6 +91,25 @@ public class MedicionDeEntorno {
 
         return salida;
     }
+
+    public String toCVS() {
+        String salida="";
+        if(cronometro.activo) salida = salida + cronometro + ",";
+        if(velocidad.activo) salida = salida + velocidad + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.x + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.maxX + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.minX + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.y + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.maxY + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.minY + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.z + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.maxZ + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.minZ;
+        //if(giro.activo) salida = salida + giro + "\n";
+        //if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
+        salida=salida+"\n";
+        return salida;
+    }
 }
 
 
@@ -148,6 +167,7 @@ class Aceleracion {
                 "y=" + String.format("%.2f", y) + ", "+ String.format("%.2f", maxY) +", "+ String.format("%.2f", minY) +"\n"+
                 "z=" + String.format("%.2f", z) + ", ="+ String.format("%.2f", maxZ) + ", "+ String.format("%.2f", minZ) +"\n";
     }
+
 }
 
 //**********************************************************************************************************************//
@@ -285,13 +305,16 @@ class Cronometro {
         //SimpleDateFormat df= new SimpleDateFormat("hh:mm:ss");
         //String formatted = df.format(date );
         long millis = this.getTranscurrido();
-        String formatted = String.format("%02d:%02d:%02d",
+        String formatted = String.format("%02d:%02d:%02d,%02d",
                 TimeUnit.MILLISECONDS.toHours(millis),
                 TimeUnit.MILLISECONDS.toMinutes(millis) -
                         TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
                 TimeUnit.MILLISECONDS.toSeconds(millis) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-        return "Cronometro: " + formatted;
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
+                (millis - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)))/10
+
+        );
+        return formatted;
     }
 
 
