@@ -13,10 +13,9 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/tV_Status"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="3.5"
-            android:id="@+id/tV_Status" />
+            android:layout_height="40dp" />
 
         <EditText
             android:layout_width="match_parent"
@@ -33,55 +32,50 @@
             android:focusable="false" />
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="3">
+            android:layout_height="100dp"
+            android:orientation="horizontal">
 
             <ImageButton
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:src="@drawable/ic_action_record"
                 android:id="@+id/ibRec"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal"
-                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:layout_weight="1"
                 android:adjustViewBounds="true"
- />
+                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:src="@drawable/ic_action_record" />
 
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_playback_stop"
                 android:id="@+id/ibStop"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:background="@drawable/ic_icono_bsckground_unselected"
-                android:adjustViewBounds="true"
-/>
-
-            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_reload"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:src="@drawable/ic_action_playback_stop" />
+
+            <ImageButton
                 android:id="@+id/ibSyncro"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:background="@drawable/ic_icono_bsckground_unselected"
-                android:adjustViewBounds="true"
- />
-
-            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_help"
-                android:id="@+id/ibAyudaInterface"
-                android:layout_weight="1"
                 android:layout_gravity="center_vertical|center_horizontal"
-                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:layout_weight="1"
                 android:adjustViewBounds="true"
- />
+                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:src="@drawable/ic_action_reload" />
+
+            <ImageButton
+                android:id="@+id/ibAyudaInterface"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@drawable/ic_icono_bsckground_unselected"
+                android:src="@drawable/ic_action_help" />
 
         </LinearLayout>
     </LinearLayout>

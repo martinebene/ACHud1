@@ -2,82 +2,155 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/lib/com.mebene.ACHud"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:background="@color/background_floating_material_dark"
+    android:orientation="vertical">
 
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tV_ruta"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="3.5"
-            android:id="@+id/tV_Status" />
+            android:layout_height="40dp"
+            android:layout_gravity="top"
+            android:paddingLeft="10dp"
+            android:textSize="@dimen/abc_text_size_small_material" />
 
         <ListView
+            android:id="@+id/lst_archivos_datos"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-
-            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:layout_marginBottom="25dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="0.5"
             android:background="@color/background_material_light"
-            android:divider="@color/background_floating_material_dark" />
+            android:choiceMode="singleChoice"
+            android:divider="@color/background_floating_material_dark"
+            android:listSelector="@color/dim_foreground_disabled_material_light" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.5"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/ibRec"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tV_ruta_esquemas_subs"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@drawable/ic_icono_bsckground_unselected"
-                android:src="@drawable/ic_action_folder_open" />
+                android:layout_gravity="top"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/s_esquemas"
+                android:textSize="@dimen/abc_text_size_title_material" />
 
-
-            <ImageButton
-                android:id="@+id/ibStop"
-                android:layout_width="wrap_content"
+            <ExpandableListView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@drawable/ic_icono_bsckground_unselected"
-                android:src="@drawable/ic_action_process_start" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp" />
+        </LinearLayout>
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_reload"
-                android:id="@+id/ibSyncro"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:background="@drawable/ic_icono_bsckground_unselected"
-                android:adjustViewBounds="true"
-                />
+        <LinearLayout
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageButton
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tV_delay"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_help"
-                android:id="@+id/ibAyudaInterface"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:background="@drawable/ic_icono_bsckground_unselected"
-                android:adjustViewBounds="true"
-                />
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/s_delay"
+                android:textSize="@dimen/abc_text_size_title_material" />
+
+            <EditText
+                android:id="@+id/editText3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/background_floating_material_light"
+                android:ems="10"
+                android:inputType="number"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/background_floating_material_dark"
+                android:textSize="@dimen/abc_text_size_title_material" />
 
         </LinearLayout>
+
     </LinearLayout>
-</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/ibRec"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_icono_bsckground_unselected"
+            android:src="@drawable/ic_action_folder_open" />
+
+
+        <ImageButton
+            android:id="@+id/ibStop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_icono_bsckground_unselected"
+            android:src="@drawable/ic_action_process_start" />
+
+        <ImageButton
+            android:id="@+id/ibSyncro"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_icono_bsckground_unselected"
+            android:src="@drawable/ic_action_reload" />
+
+        <ImageButton
+            android:id="@+id/ibAyudaInterface"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_icono_bsckground_unselected"
+            android:src="@drawable/ic_action_help" />
+
+    </LinearLayout>
+    </LinearLayout>

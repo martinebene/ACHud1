@@ -296,13 +296,9 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
                     File ruta_sd = Environment.getExternalStorageDirectory();
-                    File ruta_app_dir = new File(ruta_sd.getAbsolutePath(), getResources().getString(R.string.app_name));
-                    if (!ruta_app_dir.exists()) {
-                        ruta_app_dir.mkdir();
-                    }
-                    File f = new File(ruta_app_dir.getAbsolutePath(),filename_out);
+                    File ruta_datos_dir = new File(ruta_sd.getAbsolutePath(), getResources().getString(R.string.app_name)+File.separator+ getResources().getString(R.string.s_datos_dir));
+                    File f = new File(ruta_datos_dir.getAbsolutePath(),filename_out);
                     fout = new OutputStreamWriter(new FileOutputStream(f));
-
                 } else{
                     this.cancel(true);
                     stopSelf();
