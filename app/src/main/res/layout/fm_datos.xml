@@ -62,7 +62,8 @@
                 android:text="@string/s_esquemas"
                 android:textSize="@dimen/abc_text_size_title_material" />
 
-            <ExpandableListView
+            <Spinner
+                android:id="@+id/lstEsquemas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -112,7 +113,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/ibRec"
+            android:id="@+id/ibOpen"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|center_horizontal"
@@ -123,7 +124,7 @@
 
 
         <ImageButton
-            android:id="@+id/ibStop"
+            android:id="@+id/ibProcesar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|center_horizontal"
@@ -133,7 +134,7 @@
             android:src="@drawable/ic_action_process_start" />
 
         <ImageButton
-            android:id="@+id/ibSyncro"
+            android:id="@+id/ibRefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|center_horizontal"
@@ -143,7 +144,7 @@
             android:src="@drawable/ic_action_reload" />
 
         <ImageButton
-            android:id="@+id/ibAyudaInterface"
+            android:id="@+id/ibAyudaInterfaceDatos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|center_horizontal"

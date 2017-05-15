@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +39,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     AsyncMedicion asyncMedicion;
     public Context lcontext = this;
     SharedPreferences sharedPref;
+    public long t0, t1;
     //private final IBinder mBinder = new LocalBinder();
 
 
@@ -279,19 +282,13 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     private class AsyncMedicion extends AsyncTask<Object, Object, Object> {
 
         public boolean running=false;
-
         OutputStreamWriter fout;
         String filename_out=null;
         @Override
         protected void onPreExecute() {
-
-            Calendar c = Calendar.getInstance();
-            filename_out = "ACHUD_Out_" + c.get(Calendar.DAY_OF_MONTH)+"_"+
-                    c.get(Calendar.MONTH)+"_"+
-                    c.get(Calendar.YEAR)+"_"+
-                    c.get(Calendar.HOUR_OF_DAY)+"_"+
-                    c.get(Calendar.MINUTE)+"_"+
-                    c.get(Calendar.SECOND)+".csv";
+            t0=t1=0;
+            SimpleDateFormat formateador = new SimpleDateFormat("dd_MM_yy_HH_mm_ss");
+            filename_out = "ACHUD_Out_" + formateador.format(new Date())  +".csv";
             try {
 
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
@@ -337,9 +334,13 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         protected void onProgressUpdate (Object... params) {
 
             //Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
-            medicion.cronometro.getTranscurrido();
+
+            t0=t1;
+            t1=medicion.cronometro.getT0();
+            medicion.nroDeMedicion++;
+
             try {
-                fout.write(medicion.toCVS());
+                fout.write(t0+","+t1+","+medicion.toCVS());
 
             } catch (IOException e) {
                 Log.e("Ficheros", "Error al escribir fichero a memoria interna linea");
@@ -354,6 +355,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             //Log.i("tag1", "Info que traigo: \n" + local_gPStatus[0].toString());
 
         }
+
 
         @Override
         protected void onPostExecute(Object o) {

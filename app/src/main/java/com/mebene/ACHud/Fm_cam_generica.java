@@ -75,15 +75,24 @@ public class Fm_cam_generica extends Fragment {
         ibSyncro = (ImageButton) getView().findViewById(R.id.ibSyncro);
         ibAyudaInterface = (ImageButton) getView().findViewById(R.id.ibAyudaInterface);
 
+        if(acCore.isAdquisicionRunning()){
+            ibRec.setClickable(false);
+            ibRec.setBackgroundResource(R.drawable.ic_icono_bsckground_selected);
+        }
+
         ibRec.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 acCore.iniciarAdquisicion();
+                ibRec.setClickable(false);
+                ibRec.setBackgroundResource(R.drawable.ic_icono_bsckground_selected);
             }
         });
 
         ibStop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 acCore.detenerAdquisicion();
+                ibRec.setClickable(true);
+                ibRec.setBackgroundResource(R.drawable.ic_icono_bsckground_unselected);
                 eT_Consola.setText("detenido");
             }
         });

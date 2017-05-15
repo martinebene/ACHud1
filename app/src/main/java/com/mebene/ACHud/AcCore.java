@@ -1,5 +1,6 @@
 package com.mebene.ACHud;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -35,10 +36,13 @@ public class AcCore {
     public void iniciarAdquisicion(){
         Log.i("tag111", "iniciarAdquisicion");
         try {
-            context.startService(new Intent(context, ServicioAdquisicion2.class));
+            if(!isAdquisicionRunning()) {
+                context.startService(new Intent(context, ServicioAdquisicion2.class));
+            } else{
+                Toast toast = Toast.makeText(context, R.string.s_mensaje_servicio_en_ejecucion, Toast.LENGTH_LONG);
+                toast.show(); }
         } catch (Exception e){
-            Toast toast = Toast.makeText(context, R.string.s_mensaje_servicio_en_ejecucion, Toast.LENGTH_LONG);
-            toast.show();
+            Log.e("Error", "Error al iniciar servicio");
         }
 
     }
@@ -46,8 +50,21 @@ public class AcCore {
     public void detenerAdquisicion(){
         Log.i("tag111", "detenerAdquisicion");
         context.stopService(new Intent(context, ServicioAdquisicion2.class));
-
     }
+
+
+    public boolean isAdquisicionRunning() {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager
+                .getRunningServices(Integer.MAX_VALUE)) {
+            if (ServicioAdquisicion2.class.getName().equals(
+                    service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public void crearDirectorios(){
         Log.i("tag111", "crear directorios");

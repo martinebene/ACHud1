@@ -3,11 +3,8 @@ package com.mebene.ACHud;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Formatter;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MedicionDeEntorno {
 
+    int nroDeMedicion=0;
     Calendar fechaYhora;
     long cantMediciiones;
     Aceleracion aceleracion;
@@ -42,8 +40,6 @@ public class MedicionDeEntorno {
 */
         sharedPref = l_sharedPref;
         fechaYhora = Calendar.getInstance();
-
-
 
         velocidad = new Velocidad(false, false, sharedPref.getString("list_preference_unidades", "Km/h"));
         cantMediciiones=0;
@@ -94,7 +90,8 @@ public class MedicionDeEntorno {
 
     public String toCVS() {
         String salida="";
-        if(cronometro.activo) salida = salida + cronometro + ",";
+        salida = salida + nroDeMedicion + ",";
+        //if(cronometro.activo) salida = salida + cronometro + ",";
         if(velocidad.activo) salida = salida + velocidad + ",";
         if(aceleracion.activo) salida = salida + aceleracion.x + ",";
         if(aceleracion.activo) salida = salida + aceleracion.maxX + ",";
@@ -278,23 +275,23 @@ class Clima {
 class Cronometro {
 
     public boolean activo, disponible;
-    public long t0, transcurrido;
-
+    public long tInicial, t0;
 
     Cronometro(boolean ldisponible, boolean lactivo) {
         activo = lactivo;
         disponible = ldisponible;
-        t0=transcurrido=0;
+        tInicial = t0 =0;
     }
 
     void iniciar(){
-        t0=System.currentTimeMillis();
+        tInicial =System.currentTimeMillis();
     }
 
-    long getTranscurrido() {
-        transcurrido = System.currentTimeMillis()-t0;
-        return transcurrido;
+    long getT0() {
+        t0 = System.currentTimeMillis()- tInicial;
+        return t0;
     }
+
 
     @Override
     public String toString() {
@@ -304,7 +301,15 @@ class Cronometro {
 
         //SimpleDateFormat df= new SimpleDateFormat("hh:mm:ss");
         //String formatted = df.format(date );
-        long millis = this.getTranscurrido();
+        long millis = this.getT0();
+
+/*
+        long time = end - init;
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(time);
+        final SimpleDateFormat sdfParser = new SimpleDateFormat("HH:mm:ss", new Locale("ES"));
+        String sTime = sdfParser.format(cal.getTime());
+
         String formatted = String.format("%02d:%02d:%02d,%02d",
                 TimeUnit.MILLISECONDS.toHours(millis),
                 TimeUnit.MILLISECONDS.toMinutes(millis) -
@@ -314,11 +319,12 @@ class Cronometro {
                 (millis - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)))/10
 
         );
-        return formatted;
+        return formatted;*/
+        return Long.toString(millis);
+
     }
-
-
 }
+
 
 //**********************************************************************************************************************//
 class Velocidad {

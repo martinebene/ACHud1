@@ -1,1 +1,9 @@
-Prueba
+{NRO_MED}
+{T0_HH}:{T0_mm}:{T0_ss},{T0_SSS} --> {T1_HH}:{T1_mm}:{T1_ss},{T1_SSS}
+Cr: {T0_HH}:{T0_mm}:{T0_ss},{T0_SSS} Vel: {VEL} Acel max X: {A_MAX_X}
+
+
+    1
+    00:00:00,394 /-/-/>/ 00:00:03,031
+    <i>Anteriormente en
+    <font color="#FE00FE">“Sons of Anarchy”</font></i>

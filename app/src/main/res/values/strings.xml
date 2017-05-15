@@ -39,5 +39,6 @@
     <string name="s_esquemas_assets_dir">esquemas</string>
     <string name="s_datos_dir">Datos</string>
     <string name="s_out_dir">Salidas</string>
+    <string name="s_elemento_no_seleccionado">Debe seleccionar un archivo de la lista</string>
 
 </resources>
