@@ -349,7 +349,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
 
             Intent intent = new Intent(BROADCAST_MEDICION);
-            intent.putExtra("medicion", medicion.toString4());
+            intent.putExtra("medicion", medicion.toStringDisplay());
             LocalBroadcastManager.getInstance(lcontext).sendBroadcast(intent);
            // Toast.makeText(getApplicationContext(), medicion.toString3(), Toast.LENGTH_LONG).show();
             //Log.i("tag1", "Info que traigo: \n" + local_gPStatus[0].toString());

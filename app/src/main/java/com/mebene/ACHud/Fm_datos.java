@@ -133,6 +133,7 @@ public class Fm_datos extends Fragment {
                         +getResources().getString(R.string.s_datos_dir)+ File.separator + archivoDatosSeleccionado);
 
 
+//ver de pasar esta logica al AC core, pasando el nombre del archivo y el esquema.
 
                 if(f.exists()){
                     try{
@@ -145,6 +146,10 @@ public class Fm_datos extends Fragment {
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
                         while ((readLine = br.readLine()) != null) {
+
+                            //hacer el split
+                            //tener la lista de constantes q representen los enteros de cada lugar del vector q se crea con el split
+                            //usar el replace con la linea del esquema
                             Log.i("tag444", readLine);
                         }
 

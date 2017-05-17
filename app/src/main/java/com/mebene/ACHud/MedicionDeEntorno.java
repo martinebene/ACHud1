@@ -3,8 +3,12 @@ package com.mebene.ACHud;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Formatter;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -88,20 +92,34 @@ public class MedicionDeEntorno {
         return salida;
     }
 
+    public String toStringDisplay() {
+        String salida="";
+        if(aceleracion.activo) salida = salida + aceleracion + "\n";
+        if(giro.activo) salida = salida + giro + "\n";
+        if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
+        if(cronometro.activo) salida = salida + cronometro.toString("HH:mm:ss") + "\n\n";
+        if(velocidad.activo) salida = salida + velocidad + "\n";
+
+        return salida;
+    }
+
     public String toCVS() {
         String salida="";
         salida = salida + nroDeMedicion + ",";
         //if(cronometro.activo) salida = salida + cronometro + ",";
         if(velocidad.activo) salida = salida + velocidad + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.x + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.maxX + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.minX + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.y + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.maxY + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.minY + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.z + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.maxZ + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.minZ;
+        if(aceleracion.activo) salida = salida + aceleracion.getX() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbX() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxX() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getMinX()+ ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getY() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbY() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxY() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getMinY() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getZ() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbZ() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxZ() + ",";
+        if(aceleracion.activo) salida = salida + aceleracion.getMinZ();
         //if(giro.activo) salida = salida + giro + "\n";
         //if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
         salida=salida+"\n";
@@ -121,6 +139,7 @@ class Aceleracion {
     final float alpha = 0.8f;
     final int delayMax = 30;
     int i;
+    DecimalFormat df;
 
     Aceleracion(boolean ldisponible, boolean lactivo) {
         activo = lactivo;
@@ -131,6 +150,10 @@ class Aceleracion {
         gravity[0] = 0f;
         gravity[1] = 0f;
         gravity[2] = 0f;
+
+        df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+        df.setMinimumFractionDigits(2);
     }
 
     public void push(float lx, float ly, float lz){
@@ -157,12 +180,63 @@ class Aceleracion {
         i++;
     }
 
+    public String getX() {
+        return df.format(x);
+    }
+
+    public String getY() {
+        return df.format(y);
+    }
+
+    public String getZ() {
+        return df.format(z);
+    }
+
+    public String getMaxX() {
+        return df.format(maxX);
+    }
+
+    public String getMaxY() {
+        return df.format(maxY);
+    }
+
+    public String getMaxZ() {
+        return df.format(maxZ);
+    }
+
+    public String getMinX() {
+        return df.format(minX);
+    }
+
+    public String getMinY() {
+        return df.format(minY);
+    }
+
+    public String getMinZ() {
+        return df.format(minZ);
+    }
+
+    public String getMaxAbX() {
+        if(Math.abs(maxX)>Math.abs(minX))return  df.format(maxX);
+        else return  df.format(minX);
+    }
+
+    public String getMaxAbY() {
+        if(Math.abs(maxY)>Math.abs(minY))return  df.format(maxY);
+        else return  df.format(minY);
+    }
+
+    public String getMaxAbZ() {
+        if(Math.abs(maxZ)>Math.abs(minZ))return  df.format(maxZ);
+        else return  df.format(minZ);
+    }
+
     @Override
     public String toString() {
         return "Aceleracion:\n" +
-                "x=" + String.format("%.2f", x) + ", "+ String.format("%.2f", maxX) + ", "+ String.format("%.2f", minX) +"\n"+
-                "y=" + String.format("%.2f", y) + ", "+ String.format("%.2f", maxY) +", "+ String.format("%.2f", minY) +"\n"+
-                "z=" + String.format("%.2f", z) + ", ="+ String.format("%.2f", maxZ) + ", "+ String.format("%.2f", minZ) +"\n";
+                "x=" + String.format("%.2f", x) + ", Max: "+ getMaxAbX() +"\n"+
+                "y=" + String.format("%.2f", y) + ", Max: "+ getMaxAbZ() +"\n"+
+                "z=" + String.format("%.2f", z) + ", Max: "+ getMaxAbZ() +"\n";
     }
 
 }
@@ -321,6 +395,24 @@ class Cronometro {
         );
         return formatted;*/
         return Long.toString(millis);
+
+    }
+
+    public String toString(String formato) {
+
+        // Date date = new Date(this.getTranscurrido());
+        //return date.toString();
+
+        //SimpleDateFormat df= new SimpleDateFormat("hh:mm:ss");
+        //String formatted = df.format(date );
+        long millis = this.getT0();
+        TimeZone tz = TimeZone.getDefault();
+
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(millis);
+        final SimpleDateFormat sdfParser = new SimpleDateFormat(formato);
+        sdfParser.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return sdfParser.format(cal.getTime());
 
     }
 }
