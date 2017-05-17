@@ -87,7 +87,7 @@
                 android:textSize="@dimen/abc_text_size_title_material" />
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/et_delay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
@@ -95,6 +95,8 @@
                 android:background="@color/background_floating_material_light"
                 android:ems="10"
                 android:inputType="number"
+                android:digits="1234567890 "
+                android:maxLength="19"
                 android:paddingBottom="5dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"

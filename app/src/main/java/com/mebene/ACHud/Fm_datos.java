@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -35,7 +36,8 @@ public class Fm_datos extends Fragment {
     AcCore acCore;
     ListView listaArchivosDatos;
     Spinner listaArchivosEsquemas;
-    String readLine=null, archivoDatosSeleccionado, archivoEsquemaSeleccionado;
+    EditText et_delay;
+    String archivoDatosSeleccionado, archivoEsquemaSeleccionado;
 
 
     @Override
@@ -65,13 +67,10 @@ public class Fm_datos extends Fragment {
         item_datos = new ArrayList<String>();
         item_esquemas = new ArrayList<String>();
 
-
-
-
-
-
         TextView ruta = (TextView)  getView().findViewById(R.id.tV_ruta);
         ruta.setText("Ruta de datos: "+Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator+ getResources().getString(R.string.s_datos_dir));
+
+        et_delay = (EditText) getView().findViewById(R.id.et_delay);
 
         Log.e("tag33", "ruta: " + Environment.getExternalStorageDirectory());
         Log.e("tag34", "ruta: " + File.separator);
@@ -128,40 +127,10 @@ public class Fm_datos extends Fragment {
         ibProcesar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                archivoEsquemaSeleccionado = (String) listaArchivosEsquemas.getSelectedItem();
+                int n = acCore.procesarDatos(archivoEsquemaSeleccionado, archivoDatosSeleccionado, et_delay.getText().toString());
 
-                File f = new File(Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
-                        +getResources().getString(R.string.s_datos_dir)+ File.separator + archivoDatosSeleccionado);
-
-
-//ver de pasar esta logica al AC core, pasando el nombre del archivo y el esquema.
-
-                if(f.exists()){
-                    try{
-                        Log.i("tag444", "entre");
-                        // Open the file that is the first
-                        // command line parameter
-                        FileInputStream fstream = new FileInputStream(f);
-                        // Get the object of DataInputStream
-                        DataInputStream in = new DataInputStream(fstream);
-                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-                        while ((readLine = br.readLine()) != null) {
-
-                            //hacer el split
-                            //tener la lista de constantes q representen los enteros de cada lugar del vector q se crea con el split
-                            //usar el replace con la linea del esquema
-                            Log.i("tag444", readLine);
-                        }
-
-                        in.close();
-                    }catch (Exception e){
-                        Log.e("Procesar", "Error al procesar" + e);}
-
-
-                } else{
-                    Toast.makeText(getActivity(), getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
-                }
-
+                Log.e("tag444", "se procesaron: " + n + " lineas.");
             }
         });
 

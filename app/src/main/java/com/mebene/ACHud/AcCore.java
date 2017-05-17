@@ -8,9 +8,13 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 /**
@@ -124,6 +128,88 @@ public class AcCore {
         }
 
     }
+
+
+    public int procesarDatos(String fn_esquema, String fn_datos, String delay){
+
+        int n=0;
+        String readLine=null, esquema="";
+
+        Log.i("tag444", "procesar datos con: " + fn_esquema +" "+ fn_datos + " " + delay);
+
+        File f_datos = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
+                +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_datos);
+
+        File f_esquema = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
+                +context.getResources().getString(R.string.s_esquemas_dir)+ File.separator + fn_esquema);
+
+
+        Log.e("tag33", "ruta: " + Environment.getExternalStorageDirectory());
+        Log.e("tag34", "ruta: " + File.separator);
+        Log.e("tag35", "ruta: " + context.getResources().getString(R.string.app_name));
+        Log.e("tag36", "ruta: " + Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name));
+        Log.e("tag37", "ruta: " + Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
+                +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_datos);
+        Log.e("tag38", "ruta: " + Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
+                +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_esquema);
+
+        if(f_esquema.exists()){
+            try{
+                Log.i("tag444", "entre f esquemas");
+                // Open the file that is the first
+                // command line parameter
+                FileInputStream fstream = new FileInputStream(f_esquema);
+                // Get the object of DataInputStream
+                DataInputStream in = new DataInputStream(fstream);
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                while ((readLine = br.readLine()) != null) {
+                    esquema = esquema + readLine + "\n";
+                }
+            Log.i("tag444 esquema", "\n"+ esquema);
+            in.close();
+        }catch (Exception e){
+            Log.e("Procesar", "Error al procesar esquema" + e);
+            return -1;}
+        }else{
+                Toast.makeText(context, context.getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
+                return -1;
+        }
+
+
+        if(f_datos.exists()){
+            try{
+                Log.i("tag444", "entre f datos");
+                // Open the file that is the first
+                // command line parameter
+                FileInputStream fstream = new FileInputStream(f_datos);
+                // Get the object of DataInputStream
+                DataInputStream in = new DataInputStream(fstream);
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                while ((readLine = br.readLine()) != null) {
+
+                    //hacer el split
+                    //tener la lista de constantes q representen los enteros de cada lugar del vector q se crea con el split
+                    //usar el replace con la linea del esquema
+                    Log.i("tag444", readLine);
+                    n++;
+                }
+
+                Log.i("tag444", "lineas al final del readline de datos: "+String.valueOf(n));
+                in.close();
+
+            }catch (Exception e){
+                Log.e("tag444", "Error al procesar" + e);
+                return -1;}
+
+        } else{
+            Toast.makeText(context, context.getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
+        }
+
+        return n;
+    }
+
+
+
 
     //**********************************************************************************************************************//
     /** Defines callbacks for service binding, passed to bindService() */
