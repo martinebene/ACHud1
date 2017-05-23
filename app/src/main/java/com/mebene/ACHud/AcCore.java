@@ -16,6 +16,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Martin on 03/04/2016.
@@ -137,13 +140,34 @@ public class AcCore {
 
         Log.i("tag444", "procesar datos con: " + fn_esquema +" "+ fn_datos + " " + delay);
 
-        File f_datos = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
-                +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_datos);
+        File f_datos=null, f_esquema=null, f_salida_procesada=null;
+        OutputStreamWriter fout;
 
-        File f_esquema = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
-                +context.getResources().getString(R.string.s_esquemas_dir)+ File.separator + fn_esquema);
+        SimpleDateFormat formateador = new SimpleDateFormat("dd_MM_yy_HH_mm_ss");
+        String filename_out = "ACHUD_Out_" + formateador.format(new Date())  +".srt";
+
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+
+            f_datos = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
+                    +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_datos);
+
+            f_esquema = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
+                    +context.getResources().getString(R.string.s_esquemas_dir)+ File.separator + fn_esquema);
+
+            f_salida_procesada = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
+                    +context.getResources().getString(R.string.s_out_dir), filename_out);
+
+        } else{
+            Log.e("tag23", "no disponible alamacenamiento externo");
+            return -1;
+        }
 
 
+
+
+
+
+/*
         Log.e("tag33", "ruta: " + Environment.getExternalStorageDirectory());
         Log.e("tag34", "ruta: " + File.separator);
         Log.e("tag35", "ruta: " + context.getResources().getString(R.string.app_name));
@@ -152,6 +176,8 @@ public class AcCore {
                 +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_datos);
         Log.e("tag38", "ruta: " + Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
                 +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_esquema);
+*/
+
 
         if(f_esquema.exists()){
             try{
@@ -177,25 +203,44 @@ public class AcCore {
 
 
         if(f_datos.exists()){
+
             try{
                 Log.i("tag444", "entre f datos");
-                // Open the file that is the first
-                // command line parameter
+
+                //if (f_salida_procesada.exists())
+                    fout = new OutputStreamWriter(new FileOutputStream(f_salida_procesada));
+                //else {
+                //    Log.e("Procesar", "Error al abrir archivo de salida");
+                //    return -1;}
+
                 FileInputStream fstream = new FileInputStream(f_datos);
-                // Get the object of DataInputStream
                 DataInputStream in = new DataInputStream(fstream);
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
                 while ((readLine = br.readLine()) != null) {
 
-                    //hacer el split
-                    //tener la lista de constantes q representen los enteros de cada lugar del vector q se crea con el split
-                    //usar el replace con la linea del esquema
-                    Log.i("tag444", readLine);
+                    String[] arrayValores = readLine.split(",");
+
+                    String lineaSrt = esquema;
+
+                    //Log.i("tag444", "length de EDA: "+MedicionDeEntorno.EDA.values().length);
+                    //Log.i("tag444", "length de arrayValores: "+arrayValores.length);
+
+                    for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
+                        lineaSrt=lineaSrt.replaceAll( "\\{"+valor.toString()+"\\}", arrayValores[valor.ordinal()]);
+                        //Log.i("tag444", "busco: "+ valor.toString() + " para reemplazar por: "+arrayValores[valor.ordinal()]);
+                        // cadena.replaceAll(busqueda, reemplazo);
+                    }
+
+                    fout.write(lineaSrt);
+
+                    Log.i("tag444", lineaSrt);
                     n++;
                 }
 
                 Log.i("tag444", "lineas al final del readline de datos: "+String.valueOf(n));
                 in.close();
+                fout.close();
 
             }catch (Exception e){
                 Log.e("tag444", "Error al procesar" + e);

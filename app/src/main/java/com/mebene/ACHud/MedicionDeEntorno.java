@@ -28,8 +28,33 @@ public class MedicionDeEntorno {
     Velocidad velocidad;
     SharedPreferences sharedPref;
     public static final int KMH=0, MPH=1, MS=2, MKM=3, MM=4;
-
-
+    //Estructura de datos de archivo
+    public enum EDA
+    {
+        T0_HH_MED,
+        T0_mm_MED,
+        T0_ss_MED,
+        T0_SSS_MED,
+        T1_HH_MED,
+        T1_mm_MED,
+        T1_ss_MED,
+        T1_SSS_MED,
+        NRO_MED,
+        VEL,
+        VEL_MAX,
+        ACEL_X,
+        ACEL_MA_AB_X,
+        ACEL_MA_X,
+        ACEL_MI_X,
+        ACEL_Y,
+        ACEL_MA_AB_Y,
+        ACEL_MA_Y,
+        ACEL_MI_Y,
+        ACEL_Z,
+        ACEL_MA_AB_Z,
+        ACEL_MA_Z,
+        ACEL_MI_Z
+        }
 
 
     //**********************************************************************************************************************//
@@ -107,19 +132,43 @@ public class MedicionDeEntorno {
         String salida="";
         salida = salida + nroDeMedicion + ",";
         //if(cronometro.activo) salida = salida + cronometro + ",";
-        if(velocidad.activo) salida = salida + velocidad + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getX() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbX() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxX() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getMinX()+ ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getY() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbY() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxY() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getMinY() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getZ() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbZ() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxZ() + ",";
-        if(aceleracion.activo) salida = salida + aceleracion.getMinZ();
+        if(velocidad.activo) salida = salida + velocidad.getVel() + ","; else salida = salida + "_,";
+        if(velocidad.activo) salida = salida + velocidad.getVelMax() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getX() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbX() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxX() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMinX()+ ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getY() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbY() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxY() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMinY() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getZ() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbZ() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxZ() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMinZ(); else salida = salida + "_,";
+        //if(giro.activo) salida = salida + giro + "\n";
+        //if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
+        salida=salida+"\n";
+        return salida;
+    }
+
+    public String toCVS2() {
+        String salida="";
+        salida = salida + nroDeMedicion + ",";
+        //if(cronometro.activo) salida = salida + cronometro + ",";
+        if(velocidad.activo) salida = salida + velocidad + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getX() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbX() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxX() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMinX()+ ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getY() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbY() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxY() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMinY() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getZ() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbZ() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMaxZ() + ","; else salida = salida + "_,";
+        if(aceleracion.activo) salida = salida + aceleracion.getMinZ(); else salida = salida + "_,";
         //if(giro.activo) salida = salida + giro + "\n";
         //if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
         salida=salida+"\n";
@@ -181,27 +230,30 @@ class Aceleracion {
     }
 
     public String getX() {
-        return df.format(x);
+        if (x>0) return "+"+df.format(x);
+        else return df.format(x);
     }
 
     public String getY() {
-        return df.format(y);
+        if (y>0) return "+"+df.format(y);
+        else return df.format(y);
     }
 
     public String getZ() {
-        return df.format(z);
+        if (z>0) return "+"+df.format(z);
+        else return df.format(z);
     }
 
     public String getMaxX() {
-        return df.format(maxX);
+        return "+"+df.format(maxX);
     }
 
     public String getMaxY() {
-        return df.format(maxY);
+        return "+"+df.format(maxY);
     }
 
     public String getMaxZ() {
-        return df.format(maxZ);
+        return "+"+df.format(maxZ);
     }
 
     public String getMinX() {
@@ -217,26 +269,26 @@ class Aceleracion {
     }
 
     public String getMaxAbX() {
-        if(Math.abs(maxX)>Math.abs(minX))return  df.format(maxX);
+        if(Math.abs(maxX)>Math.abs(minX))return  "+"+df.format(maxX);
         else return  df.format(minX);
     }
 
     public String getMaxAbY() {
-        if(Math.abs(maxY)>Math.abs(minY))return  df.format(maxY);
+        if(Math.abs(maxY)>Math.abs(minY))return  "+"+df.format(maxY);
         else return  df.format(minY);
     }
 
     public String getMaxAbZ() {
-        if(Math.abs(maxZ)>Math.abs(minZ))return  df.format(maxZ);
+        if(Math.abs(maxZ)>Math.abs(minZ))return  "+"+df.format(maxZ);
         else return  df.format(minZ);
     }
 
     @Override
     public String toString() {
         return "Aceleracion:\n" +
-                "x=" + String.format("%.2f", x) + ", Max: "+ getMaxAbX() +"\n"+
-                "y=" + String.format("%.2f", y) + ", Max: "+ getMaxAbZ() +"\n"+
-                "z=" + String.format("%.2f", z) + ", Max: "+ getMaxAbZ() +"\n";
+                "x=" + String.format("%.2f", getX()) + ", Max: "+ getMaxAbX() +"\n"+
+                "y=" + String.format("%.2f", getY()) + ", Max: "+ getMaxAbZ() +"\n"+
+                "z=" + String.format("%.2f", getZ()) + ", Max: "+ getMaxAbZ() +"\n";
     }
 
 }
@@ -462,6 +514,9 @@ class Velocidad {
 
         Log.e("Aviso2", "Entre en set vel con velmedida: " + velMedida );
 
+        if (velMedida > velocidadMaxima)
+            velocidadMaxima=velMedida;
+
             switch (unidad) {
                 case MedicionDeEntorno.KMH:
                     velocidad = velMedida * 3.6; Log.e("Aviso2", "Entre en kmh: " + unidad + " y str: " + strUnidad);break;
@@ -476,15 +531,27 @@ class Velocidad {
             }
     }
 
-    @Override
-    public String toString() {
-
+    public String getVel() {
         Formatter fmt = new Formatter(new StringBuilder());
         fmt.format("%4.1f", velocidad);
         String strCurrentSpeed = fmt.toString();
         strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
 
         return strCurrentSpeed + strUnidad;
+    }
+
+    public String getVelMax() {
+        Formatter fmt = new Formatter(new StringBuilder());
+        fmt.format("%4.1f", velocidadMaxima);
+        String strCurrentSpeed = fmt.toString();
+        strCurrentSpeed = strCurrentSpeed.replace(' ', '0');
+
+        return strCurrentSpeed + strUnidad;
+    }
+
+    @Override
+    public String toString() {
+        return this.getVel();
     }
 
 }

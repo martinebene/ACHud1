@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 
 public class ServicioAdquisicion2 extends Service implements SensorEventListener, IBaseGpsListener {
@@ -260,6 +261,18 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
     }
 
 
+    public String getTimeFormatedFromMillis(long millis, String formato)
+    {
+        TimeZone tz = TimeZone.getDefault();
+
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(millis);
+        final SimpleDateFormat sdfParser = new SimpleDateFormat(formato);
+        sdfParser.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return sdfParser.format(cal.getTime());
+    }
+
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //**********************************************************************************************************************//
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,7 +353,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             medicion.nroDeMedicion++;
 
             try {
-                fout.write(t0+","+t1+","+medicion.toCVS());
+                fout.write(getTimeFormatedFromMillis(t0,"HH,mm,ss,SSS")+","+getTimeFormatedFromMillis(t1,"HH,mm,ss,SSS")+","+medicion.toCVS());
 
             } catch (IOException e) {
                 Log.e("Ficheros", "Error al escribir fichero a memoria interna linea");
