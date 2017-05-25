@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Martin on 03/04/2016.
@@ -162,11 +163,6 @@ public class AcCore {
             return -1;
         }
 
-
-
-
-
-
 /*
         Log.e("tag33", "ruta: " + Environment.getExternalStorageDirectory());
         Log.e("tag34", "ruta: " + File.separator);
@@ -177,7 +173,6 @@ public class AcCore {
         Log.e("tag38", "ruta: " + Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
                 +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_esquema);
 */
-
 
         if(f_esquema.exists()){
             try{
@@ -201,7 +196,6 @@ public class AcCore {
                 return -1;
         }
 
-
         if(f_datos.exists()){
 
             try{
@@ -220,6 +214,8 @@ public class AcCore {
                 while ((readLine = br.readLine()) != null) {
 
                     String[] arrayValores = readLine.split(",");
+
+                    String[] arrayValoresConDelay = aplicarDelay(arrayValores, delay);
 
                     String lineaSrt = esquema;
 
@@ -254,6 +250,60 @@ public class AcCore {
     }
 
 
+    private String[] aplicarDelay(String[] arrayValores, String delayString) {
+
+        long delayLong;
+        String hora="", minuto="", segundo="", milisegundo="";
+
+        try {
+            delayLong = Long.valueOf(delayString);
+        }catch (NumberFormatException e){
+            delayLong=0;
+        }
+
+
+        hora = String.valueOf(TimeUnit.MILLISECONDS.toHours(delayLong));
+        minuto = String.valueOf(TimeUnit.MILLISECONDS.toMinutes(delayLong) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(delayLong)));
+        segundo = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(delayLong) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(delayLong)));
+        milisegundo = String.valueOf((delayLong - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(delayLong)))/10);
+
+
+        arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()] =   String.valueOf(
+                Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()]) +
+                Long.valueOf(hora) );
+
+        arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()] =   String.valueOf(
+                Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()]) +
+                        Long.valueOf(minuto) );
+
+        arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()] =   String.valueOf(
+                Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()]) +
+                        Long.valueOf(segundo) );
+
+        arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()] =   String.valueOf(
+                Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()]) +
+                        Long.valueOf(milisegundo) );
+
+
+        arrayValores[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] =   String.valueOf(
+                Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()]) +
+                        Long.valueOf(hora) );
+
+        arrayValores[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] =   String.valueOf(
+                Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()]) +
+                        Long.valueOf(minuto) );
+
+        arrayValores[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()] =   String.valueOf(
+                Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()]) +
+                        Long.valueOf(segundo) );
+
+        arrayValores[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()] =   String.valueOf(
+                Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()]) +
+                        Long.valueOf(milisegundo) );
+
+        return arrayValores;
+    }
 
 
     //**********************************************************************************************************************//

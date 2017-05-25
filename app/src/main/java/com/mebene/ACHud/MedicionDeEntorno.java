@@ -286,9 +286,9 @@ class Aceleracion {
     @Override
     public String toString() {
         return "Aceleracion:\n" +
-                "x=" + String.format("%.2f", getX()) + ", Max: "+ getMaxAbX() +"\n"+
-                "y=" + String.format("%.2f", getY()) + ", Max: "+ getMaxAbZ() +"\n"+
-                "z=" + String.format("%.2f", getZ()) + ", Max: "+ getMaxAbZ() +"\n";
+                "x=" + getX() + ", Max: "+ getMaxAbX() +"\n"+
+                "y=" + getY() + ", Max: "+ getMaxAbZ() +"\n"+
+                "z=" + getZ() + ", Max: "+ getMaxAbZ() +"\n";
     }
 
 }
