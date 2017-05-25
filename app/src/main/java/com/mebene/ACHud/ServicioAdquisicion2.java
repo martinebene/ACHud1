@@ -11,7 +11,6 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -26,9 +25,7 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 
 
@@ -260,7 +257,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
     }
 
-
+/*
     public String getTimeFormatedFromMillis(long millis, String formato)
     {
         TimeZone tz = TimeZone.getDefault();
@@ -271,7 +268,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         sdfParser.setTimeZone(TimeZone.getTimeZone("GMT"));
         return sdfParser.format(cal.getTime());
     }
-
+*/
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //**********************************************************************************************************************//
@@ -348,13 +345,29 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
             //Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
 
-            t0=t1;
-            t1=medicion.cronometro.getT0();
-            medicion.nroDeMedicion++;
+
+            //crono, t0, t1, nroDeMedicion
+
+//esto reemplazarlo por un metodo en mediocion, q sea un marca paso, para manejar el timepo., directamente lo puede llamar toCSV desde medicion y q aca sea trasnparente
+      //      t0=t1;
+        //    t1=medicion.cronometro.getT0();
+          //  medicion.nroDeMedicion++;
+
+            String arrayDatos[] = medicion.getIntervaloMedicion();
+
+            String linea ="";
+            for (int i= 0; i<arrayDatos.length ;i++){
+                linea = linea + arrayDatos[i];
+                if ((i-1)< arrayDatos.length)
+                    linea = linea + ",";
+            }
+            linea = linea + "\n";
+
+            Log.i("tag4444", "Linea Nueva: " + linea);
 
             try {
-                fout.write(getTimeFormatedFromMillis(t0,"HH,mm,ss,SSS")+","+getTimeFormatedFromMillis(t1,"HH,mm,ss,SSS")+","+medicion.toCVS());
-
+                //fout.write(getTimeFormatedFromMillis(t0,"HH,mm,ss,SSS")+","+getTimeFormatedFromMillis(t1,"HH,mm,ss,SSS")+","+medicion.toCVS());
+                fout.write(linea);
             } catch (IOException e) {
                 Log.e("Ficheros", "Error al escribir fichero a memoria interna linea");
                 e.printStackTrace();

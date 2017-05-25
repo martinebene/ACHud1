@@ -17,7 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MedicionDeEntorno {
 
-    int nroDeMedicion=0;
+    int nroDeMedicion = 0;
+    long t0 = 0, t1 = 0;
     Calendar fechaYhora;
     long cantMediciiones;
     Aceleracion aceleracion;
@@ -27,10 +28,10 @@ public class MedicionDeEntorno {
     Cronometro cronometro;
     Velocidad velocidad;
     SharedPreferences sharedPref;
-    public static final int KMH=0, MPH=1, MS=2, MKM=3, MM=4;
+    public static final int KMH = 0, MPH = 1, MS = 2, MKM = 3, MM = 4;
+
     //Estructura de datos de archivo
-    public enum EDA
-    {
+    public enum EDA {
         T0_HH_MED,
         T0_mm_MED,
         T0_ss_MED,
@@ -40,8 +41,13 @@ public class MedicionDeEntorno {
         T1_ss_MED,
         T1_SSS_MED,
         NRO_MED,
+        CR_HH_MED,
+        CR_mm_MED,
+        CR_ss_MED,
+        CR_SSS_MED,
         VEL,
         VEL_MAX,
+        ALT,
         ACEL_X,
         ACEL_MA_AB_X,
         ACEL_MA_X,
@@ -54,12 +60,12 @@ public class MedicionDeEntorno {
         ACEL_MA_AB_Z,
         ACEL_MA_Z,
         ACEL_MI_Z
-        }
+    }
 
 
     //**********************************************************************************************************************//
 //    public MedicionDeEntorno(List<Sensor> listaSensores) {
-        public MedicionDeEntorno(SharedPreferences l_sharedPref) {
+    public MedicionDeEntorno(SharedPreferences l_sharedPref) {
 
 
 /*
@@ -71,12 +77,12 @@ public class MedicionDeEntorno {
         fechaYhora = Calendar.getInstance();
 
         velocidad = new Velocidad(false, false, sharedPref.getString("list_preference_unidades", "Km/h"));
-        cantMediciiones=0;
-        aceleracion= new Aceleracion(false, false);
-        giro=new Giro(false, false);
-        campoMagnetico=new CampoMagnetico(false, false);
-        clima=new Clima(false, false);
-        cronometro=new Cronometro(false, false);
+        cantMediciiones = 0;
+        aceleracion = new Aceleracion(false, false);
+        giro = new Giro(false, false);
+        campoMagnetico = new CampoMagnetico(false, false);
+        clima = new Clima(false, false);
+        cronometro = new Cronometro(false, false);
     }
 
     @Override
@@ -96,9 +102,9 @@ public class MedicionDeEntorno {
     }
 
     public String toString2() {
-        return aceleracion + "\n"+
-               giro + "\n"+
-               campoMagnetico +"\n"+
+        return aceleracion + "\n" +
+                giro + "\n" +
+                campoMagnetico + "\n" +
                 cronometro;
     }
 
@@ -107,76 +113,127 @@ public class MedicionDeEntorno {
     }
 
     public String toString4() {
-        String salida="";
-        if(aceleracion.activo) salida = salida + aceleracion + "\n";
-        if(giro.activo) salida = salida + giro + "\n";
-        if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
-        if(cronometro.activo) salida = salida + cronometro + "\n\n";
-        if(velocidad.activo) salida = salida + velocidad + "\n";
+        String salida = "";
+        if (aceleracion.activo) salida = salida + aceleracion + "\n";
+        if (giro.activo) salida = salida + giro + "\n";
+        if (campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
+        if (cronometro.activo) salida = salida + cronometro + "\n\n";
+        if (velocidad.activo) salida = salida + velocidad + "\n";
 
         return salida;
     }
 
     public String toStringDisplay() {
-        String salida="";
-        if(aceleracion.activo) salida = salida + aceleracion + "\n";
-        if(giro.activo) salida = salida + giro + "\n";
-        if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
-        if(cronometro.activo) salida = salida + cronometro.toString("HH:mm:ss") + "\n\n";
-        if(velocidad.activo) salida = salida + velocidad + "\n";
+        String salida = "";
+        if (aceleracion.activo) salida = salida + aceleracion + "\n";
+        if (giro.activo) salida = salida + giro + "\n";
+        if (campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
+        if (cronometro.activo) salida = salida + cronometro.toString("HH:mm:ss") + "\n\n";
+        if (velocidad.activo) salida = salida + velocidad + "\n";
 
         return salida;
     }
 
     public String toCVS() {
-        String salida="";
+        String salida = "";
         salida = salida + nroDeMedicion + ",";
         //if(cronometro.activo) salida = salida + cronometro + ",";
-        if(velocidad.activo) salida = salida + velocidad.getVel() + ","; else salida = salida + "_,";
-        if(velocidad.activo) salida = salida + velocidad.getVelMax() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getX() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbX() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxX() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMinX()+ ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getY() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbY() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxY() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMinY() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getZ() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbZ() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxZ() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMinZ(); else salida = salida + "_,";
+        if (velocidad.activo) salida = salida + velocidad.getVel() + ",";
+        else salida = salida + "_,";
+        if (velocidad.activo) salida = salida + velocidad.getVelMax() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getX() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getMaxAbX() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getMaxX() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getMinX() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getY() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getMaxAbY() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getMaxY() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getMinY() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getZ() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getMaxAbZ() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getMaxZ() + ",";
+        else salida = salida + "_,";
+        if (aceleracion.activo) salida = salida + aceleracion.getMinZ();
+        else salida = salida + "_,";
         //if(giro.activo) salida = salida + giro + "\n";
         //if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
-        salida=salida+"\n";
+        salida = salida + "\n";
         return salida;
     }
 
-    public String toCVS2() {
-        String salida="";
-        salida = salida + nroDeMedicion + ",";
-        //if(cronometro.activo) salida = salida + cronometro + ",";
-        if(velocidad.activo) salida = salida + velocidad + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getX() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbX() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxX() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMinX()+ ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getY() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbY() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxY() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMinY() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getZ() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxAbZ() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMaxZ() + ","; else salida = salida + "_,";
-        if(aceleracion.activo) salida = salida + aceleracion.getMinZ(); else salida = salida + "_,";
-        //if(giro.activo) salida = salida + giro + "\n";
-        //if(campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
-        salida=salida+"\n";
+    public String[] getIntervaloMedicion() {
+
+        t0 = t1;
+        t1 = cronometro.getT0();
+        nroDeMedicion++;
+
+        String salida[] = new String[EDA.values().length];
+        for (int i = 0; i < salida.length; i++) {
+            salida[i] = "_";
+        }
+
+        salida[EDA.NRO_MED.ordinal()] = String.valueOf(nroDeMedicion);
+
+        salida[EDA.T0_HH_MED.ordinal()] = getTimeFormatedFromMillis(t0,"HH");
+        salida[EDA.T0_mm_MED.ordinal()] = getTimeFormatedFromMillis(t0,"mm");
+        salida[EDA.T0_ss_MED.ordinal()] = getTimeFormatedFromMillis(t0,"ss");
+        salida[EDA.T0_SSS_MED.ordinal()] = getTimeFormatedFromMillis(t0,"SSS");
+
+        salida[EDA.CR_HH_MED.ordinal()] = getTimeFormatedFromMillis(t0,"HH");
+        salida[EDA.CR_mm_MED.ordinal()] = getTimeFormatedFromMillis(t0,"mm");
+        salida[EDA.CR_ss_MED.ordinal()] = getTimeFormatedFromMillis(t0,"ss");
+        salida[EDA.CR_SSS_MED.ordinal()] = getTimeFormatedFromMillis(t0,"SSS");
+
+        salida[EDA.T1_HH_MED.ordinal()] = getTimeFormatedFromMillis(t1,"HH");
+        salida[EDA.T1_mm_MED.ordinal()] = getTimeFormatedFromMillis(t1,"mm");
+        salida[EDA.T1_ss_MED.ordinal()] = getTimeFormatedFromMillis(t1,"ss");
+        salida[EDA.T1_SSS_MED.ordinal()] = getTimeFormatedFromMillis(t1,"SSS");
+
+        salida[EDA.VEL.ordinal()] = velocidad.getVel();
+        salida[EDA.VEL_MAX.ordinal()] = velocidad.getVelMax();
+
+        salida[EDA.ACEL_X.ordinal()] = aceleracion.getX();
+        salida[EDA.ACEL_MA_X.ordinal()] = aceleracion.getMaxX();
+        salida[EDA.ACEL_MI_X.ordinal()] = aceleracion.getMinX();
+        salida[EDA.ACEL_MA_AB_X.ordinal()] = aceleracion.getMaxAbX();
+
+        salida[EDA.ACEL_Y.ordinal()] = aceleracion.getY();
+        salida[EDA.ACEL_MA_Y.ordinal()] = aceleracion.getMaxY();
+        salida[EDA.ACEL_MI_Y.ordinal()] = aceleracion.getMinY();
+        salida[EDA.ACEL_MA_AB_Y.ordinal()] = aceleracion.getMaxAbY();
+
+        salida[EDA.ACEL_Z.ordinal()] = aceleracion.getZ();
+        salida[EDA.ACEL_MA_Z.ordinal()] = aceleracion.getMaxZ();
+        salida[EDA.ACEL_MI_Z.ordinal()] = aceleracion.getMinZ();
+        salida[EDA.ACEL_MA_AB_Z.ordinal()] = aceleracion.getMaxAbZ();
+
+
         return salida;
     }
+
+
+    public String getTimeFormatedFromMillis(long millis, String formato) {
+        TimeZone tz = TimeZone.getDefault();
+
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(millis);
+        final SimpleDateFormat sdfParser = new SimpleDateFormat(formato);
+        sdfParser.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return sdfParser.format(cal.getTime());
+    }
+
 }
-
-
 //**********************************************************************************************************************//
 class Aceleracion {
 
