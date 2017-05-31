@@ -23,10 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 
 public class ServicioAdquisicion2 extends Service implements SensorEventListener, IBaseGpsListener {
@@ -68,7 +66,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        medicion = new MedicionDeEntorno(sharedPref);
+        medicion = new MedicionDeEntorno(sharedPref, lcontext);
 
 
         iniciarSensores();
@@ -343,16 +341,6 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         @Override
         protected void onProgressUpdate (Object... params) {
 
-            //Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
-
-
-            //crono, t0, t1, nroDeMedicion
-
-//esto reemplazarlo por un metodo en mediocion, q sea un marca paso, para manejar el timepo., directamente lo puede llamar toCSV desde medicion y q aca sea trasnparente
-      //      t0=t1;
-        //    t1=medicion.cronometro.getT0();
-          //  medicion.nroDeMedicion++;
-
             String arrayDatos[] = medicion.getIntervaloMedicion();
 
             String linea ="";
@@ -366,19 +354,15 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             Log.i("tag4444", "Linea Nueva: " + linea);
 
             try {
-                //fout.write(getTimeFormatedFromMillis(t0,"HH,mm,ss,SSS")+","+getTimeFormatedFromMillis(t1,"HH,mm,ss,SSS")+","+medicion.toCVS());
                 fout.write(linea);
             } catch (IOException e) {
                 Log.e("Ficheros", "Error al escribir fichero a memoria interna linea");
                 e.printStackTrace();
             }
 
-
             Intent intent = new Intent(BROADCAST_MEDICION);
-            intent.putExtra("medicion", medicion.toStringDisplay());
+            intent.putExtra("medicion", medicion.toDisplay());
             LocalBroadcastManager.getInstance(lcontext).sendBroadcast(intent);
-           // Toast.makeText(getApplicationContext(), medicion.toString3(), Toast.LENGTH_LONG).show();
-            //Log.i("tag1", "Info que traigo: \n" + local_gPStatus[0].toString());
 
         }
 

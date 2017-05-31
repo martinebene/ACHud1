@@ -21,6 +21,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 /**
  * Created by Martin on 03/04/2016.
  */
@@ -29,18 +32,20 @@ public class AcCore {
     Context context;
     public boolean adquiriendo;
     ServicioAdquisicion2 mService;
-    MedicionDeEntorno ultimaMedicion;
 
     public String string_prueba;
+    private EsquemaHUD esquemaHud;
 
+    //**********************************************************************************************************************//
     public AcCore(Context lcontext) {
 
         context = lcontext;
         adquiriendo = false;
-        ultimaMedicion = null;
+        //ultimaMedicion = null;
         crearDirectorios();
     }
 
+    //**********************************************************************************************************************//
     public void iniciarAdquisicion(){
         Log.i("tag111", "iniciarAdquisicion");
         try {
@@ -54,13 +59,13 @@ public class AcCore {
         }
 
     }
-
+    //**********************************************************************************************************************//
     public void detenerAdquisicion(){
         Log.i("tag111", "detenerAdquisicion");
         context.stopService(new Intent(context, ServicioAdquisicion2.class));
     }
 
-
+    //**********************************************************************************************************************//
     public boolean isAdquisicionRunning() {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager
@@ -73,7 +78,7 @@ public class AcCore {
         return false;
     }
 
-
+    //**********************************************************************************************************************//
     public void crearDirectorios(){
         Log.i("tag111", "crear directorios");
         String pathEsquemas;
@@ -134,18 +139,19 @@ public class AcCore {
     }
 
 
+    //**********************************************************************************************************************//
     public int procesarDatos(String fn_esquema, String fn_datos, String delay){
 
         int n=0;
-        String readLine=null, esquema="";
+        String readLine=null; //,  esquema="";
 
         Log.i("tag444", "procesar datos con: " + fn_esquema +" "+ fn_datos + " " + delay);
 
         File f_datos=null, f_esquema=null, f_salida_procesada=null;
         OutputStreamWriter fout;
 
-        SimpleDateFormat formateador = new SimpleDateFormat("dd_MM_yy_HH_mm_ss");
-        String filename_out = "ACHUD_Out_" + formateador.format(new Date())  +".srt";
+
+
 
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 
@@ -155,8 +161,6 @@ public class AcCore {
             f_esquema = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
                     +context.getResources().getString(R.string.s_esquemas_dir)+ File.separator + fn_esquema);
 
-            f_salida_procesada = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
-                    +context.getResources().getString(R.string.s_out_dir), filename_out);
 
         } else{
             Log.e("tag23", "no disponible alamacenamiento externo");
@@ -173,7 +177,7 @@ public class AcCore {
         Log.e("tag38", "ruta: " + Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
                 +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_esquema);
 */
-
+/*
         if(f_esquema.exists()){
             try{
                 Log.i("tag444", "entre f esquemas");
@@ -196,34 +200,80 @@ public class AcCore {
                 return -1;
         }
 
+*/
+
+
+        if(f_esquema.exists()){
+            try{
+                Log.i("tag444", "entre f esquemas");
+                // Open the file that is the first
+                // command line parameter
+                FileInputStream fstream = new FileInputStream(f_esquema);
+                // Get the object of DataInputStream
+                DataInputStream in = new DataInputStream(fstream);
+
+                SAXParserFactory factory = SAXParserFactory.newInstance();
+
+
+                SAXParser parser = factory.newSAXParser();
+                EsquemaHandler handler = new EsquemaHandler();
+                parser.parse(in, handler);
+                esquemaHud = handler.getEsquema();
+
+                in.close();
+
+                Log.i("tag555 esquema Ext: ", esquemaHud.getExt());
+                Log.i("tag555 esquema Header: ", esquemaHud.getHeader());
+                Log.i("tag555 esquema intSub: ", esquemaHud.getIntro_sub() );
+                Log.i("tag555 esquema medsub: ", esquemaHud.getMed_sub() );
+                Log.i("tag555 esquema Delay:", ""+esquemaHud.getDelay() );
+
+            }catch (Exception e){
+                Log.e("Procesar", "Error al procesar esquema" + e);
+                return -1;}
+        }else{
+            Toast.makeText(context, context.getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
+            return -1;
+        }
+
+
+
         if(f_datos.exists()){
 
             try{
                 Log.i("tag444", "entre f datos");
 
-                //if (f_salida_procesada.exists())
+                SimpleDateFormat formateador = new SimpleDateFormat("dd_MM_yy_HH_mm_ss");
+                String filename_out = "ACHUD_Out_" + formateador.format(new Date()) +"."+esquemaHud.getExt();
+
+                f_salida_procesada = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
+                        +context.getResources().getString(R.string.s_out_dir), filename_out);
+
+                if (f_salida_procesada != null)
                     fout = new OutputStreamWriter(new FileOutputStream(f_salida_procesada));
-                //else {
-                //    Log.e("Procesar", "Error al abrir archivo de salida");
-                //    return -1;}
+                else {
+                    Log.e("Procesar", "Error al abrir archivo de salida");
+                    return -1;}
 
                 FileInputStream fstream = new FileInputStream(f_datos);
                 DataInputStream in = new DataInputStream(fstream);
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
+                fout.write(esquemaHud.getHeader());
+
                 while ((readLine = br.readLine()) != null) {
 
                     String[] arrayValores = readLine.split(",");
 
-                    String[] arrayValoresConDelay = aplicarDelay(arrayValores, delay);
+                    String[] arrayValoresConDelay = aplicarDelay(arrayValores, delay + esquemaHud.getDelay());
 
-                    String lineaSrt = esquema;
+                    String lineaSrt = esquemaHud.getMed_sub();
 
                     //Log.i("tag444", "length de EDA: "+MedicionDeEntorno.EDA.values().length);
                     //Log.i("tag444", "length de arrayValores: "+arrayValores.length);
 
                     for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
-                        lineaSrt=lineaSrt.replaceAll( "\\{"+valor.toString()+"\\}", arrayValores[valor.ordinal()]);
+                        lineaSrt=lineaSrt.replaceAll( "\\{"+valor.toString()+"\\}", arrayValoresConDelay[valor.ordinal()]);
                         //Log.i("tag444", "busco: "+ valor.toString() + " para reemplazar por: "+arrayValores[valor.ordinal()]);
                         // cadena.replaceAll(busqueda, reemplazo);
                     }
@@ -266,8 +316,8 @@ public class AcCore {
         minuto = String.valueOf(TimeUnit.MILLISECONDS.toMinutes(delayLong) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(delayLong)));
         segundo = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(delayLong) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(delayLong)));
-        milisegundo = String.valueOf((delayLong - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(delayLong)))/10);
-
+        //milisegundo = String.valueOf((delayLong - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(delayLong)))/10);
+        milisegundo = String.valueOf((delayLong - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(delayLong))));
 
         arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()] =   String.valueOf(
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()]) +

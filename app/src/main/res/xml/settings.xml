@@ -6,7 +6,7 @@
 
     </PreferenceCategory>
     <ListPreference
-        android:defaultValue="Km/h"
+        android:defaultValue="0"
         android:title="@string/s_unidades_de_velocidad"
         android:entries="@array/entradasUnidadesDeVelocidad"
         android:entryValues="@array/valoresUnidadesDeVelocidad"

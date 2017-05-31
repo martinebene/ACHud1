@@ -223,7 +223,7 @@ public class ServicioAdquisicion extends Service implements SensorEventListener 
         @Override
         protected void onProgressUpdate (Object... params) {
 
-            Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
+            //Log.i("tag", "onProgressUpdate: publishing medicion" + medicion.toString3());
 
            // Toast.makeText(getApplicationContext(), medicion.toString3(), Toast.LENGTH_LONG).show();
             //Log.i("tag1", "Info que traigo: \n" + local_gPStatus[0].toString());
