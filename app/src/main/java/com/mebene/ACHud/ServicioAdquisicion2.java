@@ -328,7 +328,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             Log.i("tag111", "AsyncMedicion iniciando");
             while (running){
                 try {
-                        Thread.sleep(100);
+                        Thread.sleep(2000);
                         publishProgress();
                 } catch (Exception e) {
                     e.printStackTrace();
