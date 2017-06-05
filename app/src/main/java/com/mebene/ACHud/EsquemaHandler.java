@@ -43,12 +43,16 @@ public class EsquemaHandler extends DefaultHandler {
                 esuquemaHUD.setExt(sbTexto.toString());
             } else if (localName.equals("Delay")) {
                 esuquemaHUD.setDelay(Integer.valueOf(sbTexto.toString()));
+            } else if (localName.equals("IntervaloRef")) {
+                esuquemaHUD.setIntervaloRef(Long.valueOf(sbTexto.toString()));
             } else if (localName.equals("Header")) {
                 esuquemaHUD.setHeader(sbTexto.toString());
             } else if (localName.equals("IntroSub")) {
                 esuquemaHUD.setIntro_sub(sbTexto.toString());
             } else if (localName.equals("MedSub")) {
                 esuquemaHUD.setMed_sub(sbTexto.toString());
+            } else if (localName.equals("Footer")) {
+                esuquemaHUD.setFooter(sbTexto.toString());
             }
             sbTexto.setLength(0);
         }
@@ -61,6 +65,7 @@ public class EsquemaHandler extends DefaultHandler {
 
         esuquemaHUD = new EsquemaHUD();
         sbTexto = new StringBuilder();
+        sbTexto.setLength(0);
         etiquetaActual = "";
     }
 

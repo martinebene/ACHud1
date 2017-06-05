@@ -35,6 +35,7 @@ public class MedicionDeEntorno {
 
     //Estructura de datos de archivo
     public enum EDA {
+        T0_SSS_ABS,
         T0_HH_MED,
         T0_mm_MED,
         T0_ss_MED,
@@ -136,6 +137,8 @@ public class MedicionDeEntorno {
         }
 
         salida[EDA.NRO_MED.ordinal()] = String.valueOf(nroDeMedicion);
+
+        salida[EDA.T0_SSS_ABS.ordinal()] = String.valueOf(t0);
 
         salida[EDA.T0_HH_MED.ordinal()] = getTimeFormatedFromMillis(t0,"HH");
         salida[EDA.T0_mm_MED.ordinal()] = getTimeFormatedFromMillis(t0,"mm");

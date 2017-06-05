@@ -150,71 +150,23 @@ public class AcCore {
         File f_datos=null, f_esquema=null, f_salida_procesada=null;
         OutputStreamWriter fout;
 
-
-
-
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-
             f_datos = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
                     +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_datos);
-
             f_esquema = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
                     +context.getResources().getString(R.string.s_esquemas_dir)+ File.separator + fn_esquema);
-
-
         } else{
             Log.e("tag23", "no disponible alamacenamiento externo");
             return -1;
         }
 
-/*
-        Log.e("tag33", "ruta: " + Environment.getExternalStorageDirectory());
-        Log.e("tag34", "ruta: " + File.separator);
-        Log.e("tag35", "ruta: " + context.getResources().getString(R.string.app_name));
-        Log.e("tag36", "ruta: " + Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name));
-        Log.e("tag37", "ruta: " + Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
-                +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_datos);
-        Log.e("tag38", "ruta: " + Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name)+File.separator
-                +context.getResources().getString(R.string.s_datos_dir)+ File.separator + fn_esquema);
-*/
-/*
         if(f_esquema.exists()){
             try{
                 Log.i("tag444", "entre f esquemas");
-                // Open the file that is the first
-                // command line parameter
                 FileInputStream fstream = new FileInputStream(f_esquema);
-                // Get the object of DataInputStream
-                DataInputStream in = new DataInputStream(fstream);
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                while ((readLine = br.readLine()) != null) {
-                    esquema = esquema + readLine + "\n";
-                }
-            Log.i("tag444 esquema", "\n"+ esquema);
-            in.close();
-        }catch (Exception e){
-            Log.e("Procesar", "Error al procesar esquema" + e);
-            return -1;}
-        }else{
-                Toast.makeText(context, context.getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
-                return -1;
-        }
-
-*/
-
-
-        if(f_esquema.exists()){
-            try{
-                Log.i("tag444", "entre f esquemas");
-                // Open the file that is the first
-                // command line parameter
-                FileInputStream fstream = new FileInputStream(f_esquema);
-                // Get the object of DataInputStream
                 DataInputStream in = new DataInputStream(fstream);
 
                 SAXParserFactory factory = SAXParserFactory.newInstance();
-
-
                 SAXParser parser = factory.newSAXParser();
                 EsquemaHandler handler = new EsquemaHandler();
                 parser.parse(in, handler);
@@ -239,7 +191,6 @@ public class AcCore {
 
 
         if(f_datos.exists()){
-
             try{
                 Log.i("tag444", "entre f datos");
 
@@ -261,35 +212,52 @@ public class AcCore {
 
                 fout.write(esquemaHud.getHeader());
 
+                Long tMedicionAnterior = 0L;
+
+                String[] arrayValoresAnterior= null;
+
+                Log.i("tag4444", "Esto devuelve: "+esquemaHud.getIntervaloRef());
+
                 while ((readLine = br.readLine()) != null) {
 
                     String[] arrayValores = readLine.split(",");
 
-                    String[] arrayValoresConDelay = aplicarDelay(arrayValores, delay + esquemaHud.getDelay());
+                    if ((Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]) - tMedicionAnterior) > esquemaHud.getIntervaloRef()) {
+                        tMedicionAnterior = Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]);
 
-                    String lineaSrt = esquemaHud.getMed_sub();
 
-                    //Log.i("tag444", "length de EDA: "+MedicionDeEntorno.EDA.values().length);
-                    //Log.i("tag444", "length de arrayValores: "+arrayValores.length);
+                        if (arrayValoresAnterior != null) {
 
-                    for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
-                        lineaSrt=lineaSrt.replaceAll( "\\{"+valor.toString()+"\\}", arrayValoresConDelay[valor.ordinal()]);
-                        //Log.i("tag444", "busco: "+ valor.toString() + " para reemplazar por: "+arrayValores[valor.ordinal()]);
-                        // cadena.replaceAll(busqueda, reemplazo);
-                    }
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()];
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()];
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()];
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()];
 
-                    fout.write(lineaSrt);
+                            String[] arrayValoresConDelay = aplicarDelay(arrayValoresAnterior, delay + esquemaHud.getDelay());
 
-                    Log.i("tag444", lineaSrt);
+                            String lineaSrt = esquemaHud.getMed_sub();
+
+                            for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
+                                lineaSrt = lineaSrt.replaceAll("\\{" + valor.toString() + "\\}", arrayValoresConDelay[valor.ordinal()]);
+                            }
+
+                            fout.write(lineaSrt);
+                            Log.i("tag444", lineaSrt);
+                        }
+
+                    arrayValoresAnterior = arrayValores;
                     n++;
+                    }
                 }
+
+                fout.write(esquemaHud.getFooter());
 
                 Log.i("tag444", "lineas al final del readline de datos: "+String.valueOf(n));
                 in.close();
                 fout.close();
 
             }catch (Exception e){
-                Log.e("tag444", "Error al procesar" + e);
+                Log.e("tag444", "Error al procesar: " + e);
                 return -1;}
 
         } else{
@@ -319,36 +287,36 @@ public class AcCore {
         //milisegundo = String.valueOf((delayLong - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(delayLong)))/10);
         milisegundo = String.valueOf((delayLong - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(delayLong))));
 
-        arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()] =   String.valueOf(
+        arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()] =   String.format("%01d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()]) +
                 Long.valueOf(hora) );
 
-        arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()] =   String.valueOf(
+        arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()] =   String.format("%02d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()]) +
                         Long.valueOf(minuto) );
 
-        arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()] =   String.valueOf(
+        arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()] =   String.format("%02d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()]) +
                         Long.valueOf(segundo) );
 
-        arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()] =   String.valueOf(
+        arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()] =   String.format("%03d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()]) +
                         Long.valueOf(milisegundo) );
 
 
-        arrayValores[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] =   String.valueOf(
+        arrayValores[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] =   String.format("%01d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()]) +
                         Long.valueOf(hora) );
 
-        arrayValores[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] =   String.valueOf(
+        arrayValores[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] =   String.format("%02d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()]) +
                         Long.valueOf(minuto) );
 
-        arrayValores[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()] =   String.valueOf(
+        arrayValores[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()] =   String.format("%02d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()]) +
                         Long.valueOf(segundo) );
 
-        arrayValores[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()] =   String.valueOf(
+        arrayValores[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()] =   String.format("%03d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()]) +
                         Long.valueOf(milisegundo) );
 

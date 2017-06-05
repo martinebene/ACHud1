@@ -6,10 +6,20 @@ package com.mebene.ACHud;
 
 public class EsquemaHUD {
 
-    String ext="", header="", intro_sub="", med_sub="";
-    int delay;
+    String ext="", header="", intro_sub="", med_sub="", footer="";
+    int delay=0;
+    long IntervaloRef = 0;
 
     public EsquemaHUD() {
+    }
+
+
+    public long getIntervaloRef() {
+        return IntervaloRef;
+    }
+
+    public void setIntervaloRef(long intervaloRef) {
+        IntervaloRef = intervaloRef;
     }
 
     public String getExt() {
@@ -22,6 +32,14 @@ public class EsquemaHUD {
 
     public String getHeader() {
         return header;
+    }
+
+    public String getFooter() {
+        return footer;
+    }
+
+    public void setFooter(String footer) {
+        this.footer = footer;
     }
 
     public void setHeader(String header) {
