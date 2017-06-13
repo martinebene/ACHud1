@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mebene.ACHud.MainActivity;
 
@@ -37,6 +39,7 @@ public class Fm_cam_generica extends Fragment {
     AcCore acCore;
     TextView tV_Status;
     EditText eT_Consola;
+    boolean bcConsolaActivo;
     ImageButton ibRec, ibStop, ibSyncro, ibAyudaInterface;
 
     public Fm_cam_generica() {
@@ -85,11 +88,38 @@ public class Fm_cam_generica extends Fragment {
                 acCore.iniciarAdquisicion();
                 ibRec.setClickable(false);
                 ibRec.setBackgroundResource(R.drawable.ic_icono_bsckground_selected);
+
+
+                Toast toast = Toast.makeText(getActivity(), "SYNC", Toast.LENGTH_LONG);
+                View toastView = toast.getView(); //This'll return the default View of the Toast.
+
+        /* And now you can get the TextView of the default View of the Toast. */
+                TextView toastMessage = (TextView) toastView.findViewById(android.R.id.message);
+                //toastMessage.setTextSize(R.integer.texto_gigante_altura);
+                toastMessage.setTextSize(45);
+                //toastMessage.setTextColor(R.color.ro);
+                //toastMessage.setGravity(Gravity.CENTER,0,0);
+                toastMessage.setCompoundDrawablePadding(16);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+
+                // eT_Consola.setTextSize(R.dimen.texto_gigante);
+                //eT_Consola.setGravity(Gravity.CENTER);
+           //     eT_Consola.setText("SYNC");
+           /*     try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }*/
+               // eT_Consola.setTextSize(R.dimen.abc_text_size_small_material);
+               // eT_Consola.setGravity(Gravity.LEFT);
+                bcConsolaActivo = true;
             }
         });
 
         ibStop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                bcConsolaActivo = false;
                 acCore.detenerAdquisicion();
                 ibRec.setClickable(true);
                 ibRec.setBackgroundResource(R.drawable.ic_icono_bsckground_unselected);
@@ -134,7 +164,8 @@ public class Fm_cam_generica extends Fragment {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            eT_Consola.setText(intent.getStringExtra("medicion"));
+            if(bcConsolaActivo)
+                eT_Consola.setText(intent.getStringExtra("medicion"));
         }
     };
 

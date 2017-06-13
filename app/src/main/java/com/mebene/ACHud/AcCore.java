@@ -216,11 +216,12 @@ public class AcCore {
 
                 String[] arrayValoresAnterior= null;
 
-                Log.i("tag4444", "Esto devuelve: "+esquemaHud.getIntervaloRef());
+                Log.i("tag4444", "Esto devuelve:... "+esquemaHud.getIntervaloRef());
 
                 while ((readLine = br.readLine()) != null) {
 
                     String[] arrayValores = readLine.split(",");
+                    String lineaSrt="";
 
                     if ((Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]) - tMedicionAnterior) > esquemaHud.getIntervaloRef()) {
                         tMedicionAnterior = Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]);
@@ -235,7 +236,10 @@ public class AcCore {
 
                             String[] arrayValoresConDelay = aplicarDelay(arrayValoresAnterior, delay + esquemaHud.getDelay());
 
-                            String lineaSrt = esquemaHud.getMed_sub();
+                            if(Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()])<esquemaHud.getIntroTime())
+                                lineaSrt = esquemaHud.getIntro_sub();
+                            else
+                                lineaSrt = esquemaHud.getMed_sub();
 
                             for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
                                 lineaSrt = lineaSrt.replaceAll("\\{" + valor.toString() + "\\}", arrayValoresConDelay[valor.ordinal()]);

@@ -8,18 +8,26 @@ public class EsquemaHUD {
 
     String ext="", header="", intro_sub="", med_sub="", footer="";
     int delay=0;
-    long IntervaloRef = 0;
+    long intervaloRef = 0;
+    long introTime = 0;
 
     public EsquemaHUD() {
     }
 
+    public long getIntroTime() {
+        return introTime;
+    }
+
+    public void setIntroTime(long introTime) {
+        this.introTime = introTime;
+    }
 
     public long getIntervaloRef() {
-        return IntervaloRef;
+        return intervaloRef;
     }
 
     public void setIntervaloRef(long intervaloRef) {
-        IntervaloRef = intervaloRef;
+        this.intervaloRef = intervaloRef;
     }
 
     public String getExt() {
@@ -47,7 +55,7 @@ public class EsquemaHUD {
     }
 
     public String getIntro_sub() {
-        return intro_sub;
+        return intro_sub+"\n";
     }
 
     public void setIntro_sub(String intro_sub) {
@@ -55,7 +63,7 @@ public class EsquemaHUD {
     }
 
     public String getMed_sub() {
-        return med_sub;
+        return med_sub+"\n";
     }
 
     public void setMed_sub(String med_sub) {

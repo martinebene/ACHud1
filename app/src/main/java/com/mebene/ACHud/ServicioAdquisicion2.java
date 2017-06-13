@@ -376,6 +376,12 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            Intent intent = new Intent(BROADCAST_MEDICION);
+            intent.putExtra("medicion", medicion.toDisplay());
+            LocalBroadcastManager.getInstance(lcontext).sendBroadcast(intent);
+
+
             running=false;
         }
 

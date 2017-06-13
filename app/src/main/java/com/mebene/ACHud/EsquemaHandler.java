@@ -1,5 +1,7 @@
 package com.mebene.ACHud;
 
+import android.util.Log;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -44,6 +46,8 @@ public class EsquemaHandler extends DefaultHandler {
             } else if (localName.equals("Delay")) {
                 esuquemaHUD.setDelay(Integer.valueOf(sbTexto.toString()));
             } else if (localName.equals("IntervaloRef")) {
+     //           Log.i("tag4444", "IntRef: " + sbTexto.toString());
+       //         Log.i("tag4444", "IntRef: " + Long.valueOf(sbTexto.toString()));
                 esuquemaHUD.setIntervaloRef(Long.valueOf(sbTexto.toString()));
             } else if (localName.equals("Header")) {
                 esuquemaHUD.setHeader(sbTexto.toString());
@@ -75,8 +79,10 @@ public class EsquemaHandler extends DefaultHandler {
 
         super.startElement(uri, localName, name, attributes);
 
+        if (localName.equals("IntroSub") && attributes.getLength()==1 && attributes.getQName(0).equals("Time"))
+            esuquemaHUD.setIntroTime(Long.valueOf(attributes.getValue(0)));
+
         etiquetaActual = localName;
         sbTexto.setLength(0);
-
     }
 }
