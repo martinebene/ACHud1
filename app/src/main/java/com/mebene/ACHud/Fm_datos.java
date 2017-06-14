@@ -91,7 +91,7 @@ public class Fm_datos extends Fragment {
 
         for (int i = 0; i < files.length; i++){
             File file = files[i];
-            if (file.isFile())
+            if (file.isFile() && isXML(file))
                 item_esquemas.add(file.getName());
         }
 
@@ -134,11 +134,17 @@ public class Fm_datos extends Fragment {
             }
         });
 
+    }
 
+    private boolean isXML(File file) {
 
-
-
-
+        String filename = file.getName();
+        String filenameArray[] = filename.split("\\.");
+        String extension = filenameArray[filenameArray.length-1];
+        if (extension.toLowerCase().compareTo("xml")==0)
+            return true;
+        else
+            return false;
     }
 
 }

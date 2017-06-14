@@ -378,7 +378,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
             }
 
             Intent intent = new Intent(BROADCAST_MEDICION);
-            intent.putExtra("medicion", medicion.toDisplay());
+            intent.putExtra("medicion", medicion.toDisplayFinal());
             LocalBroadcastManager.getInstance(lcontext).sendBroadcast(intent);
 
 

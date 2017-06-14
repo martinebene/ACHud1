@@ -120,6 +120,36 @@ public class MedicionDeEntorno {
         return salida;
     }
 
+    public String toDisplayFinal() {
+        String [] datos = ultimaMedicion;
+        String salida = "";
+
+        salida = salida +
+                "Se registraron "+datos[EDA.NRO_MED.ordinal()]+" lecturas."+"\n\n";
+
+        if (cronometro.activo) {
+            salida = salida +
+                    "Tiempo de medicion: "+datos[EDA.CR_HH_MED.ordinal()]+":"+datos[EDA.CR_mm_MED.ordinal()]+":"+datos[EDA.CR_ss_MED.ordinal()]+","+datos[EDA.CR_SSS_MED.ordinal()]+"\n\n";
+        };
+        if (aceleracion.activo) {
+            salida = salida +
+                    "Aceleraciones maximas:\n"+
+                    "X:\t" + datos[EDA.ACEL_MA_AB_X.ordinal()] + "\n" +
+                    "Y:\t" + datos[EDA.ACEL_MA_AB_Y.ordinal()] + "\n" +
+                    "Z:\t" + datos[EDA.ACEL_MA_AB_Z.ordinal()] + "\n\n";
+        };
+
+        if (velocidad.activo) {
+            salida = salida +
+                    "Vel. max.:\t"+datos[EDA.VEL_MAX.ordinal()]+" "+datos[EDA.VEL_UNI.ordinal()]+ "\n\n";
+        }
+
+        //if (giro.activo) salida = salida + giro + "\n";
+        //if (campoMagnetico.activo) salida = salida + campoMagnetico + "\n";
+
+        return salida;
+    }
+
     public String[] getIntervaloMedicion() {
 
         if(t1>0)

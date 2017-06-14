@@ -96,7 +96,9 @@ public class Fm_cam_generica extends Fragment {
         /* And now you can get the TextView of the default View of the Toast. */
                 TextView toastMessage = (TextView) toastView.findViewById(android.R.id.message);
                 //toastMessage.setTextSize(R.integer.texto_gigante_altura);
-                toastMessage.setTextSize(45);
+                toastMessage.setTextSize(75);
+                toastMessage.setBackgroundColor(getResources().getColor(R.color.rojo));
+                //toastMessage.setHighlightColor(getResources().getColor(R.color.rojo));
                 //toastMessage.setTextColor(R.color.ro);
                 //toastMessage.setGravity(Gravity.CENTER,0,0);
                 toastMessage.setCompoundDrawablePadding(16);
@@ -113,17 +115,17 @@ public class Fm_cam_generica extends Fragment {
                 }*/
                // eT_Consola.setTextSize(R.dimen.abc_text_size_small_material);
                // eT_Consola.setGravity(Gravity.LEFT);
-                bcConsolaActivo = true;
+                //bcConsolaActivo = true;
             }
         });
 
         ibStop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                bcConsolaActivo = false;
+                //bcConsolaActivo = false;
                 acCore.detenerAdquisicion();
                 ibRec.setClickable(true);
                 ibRec.setBackgroundResource(R.drawable.ic_icono_bsckground_unselected);
-                eT_Consola.setText("detenido");
+                //eT_Consola.setText("detenido");
             }
         });
 
@@ -164,7 +166,7 @@ public class Fm_cam_generica extends Fragment {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(bcConsolaActivo)
+            //if(bcConsolaActivo)
                 eT_Consola.setText(intent.getStringExtra("medicion"));
         }
     };

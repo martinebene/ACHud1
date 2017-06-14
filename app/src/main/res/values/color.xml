@@ -12,5 +12,6 @@
     <color name="texto_obscuro">#2e2e2e</color>
     <color name="texto_destacado"> #ff0000</color>
     <color name="azul">#08088A</color>
+    <color name="rojo"> #ff0000</color>
 
 </resources>
