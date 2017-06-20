@@ -293,6 +293,28 @@ public class Fm_huds extends Fragment {
                 return true;
             case (R.id.restoreHUDs):
 
+                File dir = new File(rutaHuds);
+                File[] files = dir.listFiles();
+
+                for (int i = 0; i < files.length; i++){
+                    File fileToCopy = files[i];
+                    Log.i("tag4444", "file to copy: " + fileToCopy.getName());
+                    if(acCore.isBack(fileToCopy.getName())){
+                        Log.i("tag4444", "file to copy is back: " + fileToCopy.getName());
+                        Log.i("tag4444", "file to copy sin back: " +  nameNoBack(fileToCopy.getName()));
+                        File fileRestored = new File(rutaHuds + File.separator + nameNoBack(fileToCopy.getName()));
+                        try {
+                            copyFile(fileToCopy, fileRestored);
+                        } catch (IOException e) {
+                            AlertDialog.Builder builderError = new AlertDialog.Builder(getActivity());
+                            builderError.setTitle("ERROR en restauracion");
+                            builderError.setMessage("No fue posible realizar la restauracion");
+                            builderError.show();
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                onResume();
                 Toast.makeText(getActivity(), "HUD's restaurados", Toast.LENGTH_SHORT).show();
                 return true;
             default:
@@ -322,5 +344,17 @@ public class Fm_huds extends Fragment {
             in.close();
         }
     }
+//********************************************************************************************************************************
+    private String nameNoBack(String name) {
+        String filenameArray[] = name.split("\\.");
+        String newFilename="";
+        for(int i=0; i<(filenameArray.length-1);i++)
+            if(newFilename.compareTo("")==0){
+                newFilename=filenameArray[i];}
+            else{
+                newFilename=newFilename+"."+filenameArray[i];}
+        return newFilename;
+    }
 
+//********************************************************************************************************************************
 }

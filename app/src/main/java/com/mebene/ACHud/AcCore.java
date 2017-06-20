@@ -378,6 +378,14 @@ public class AcCore {
             return false;
     }
 
-
+    //**********************************************************************************************************************//
+    public boolean isBack(String filename) {
+        String filenameArray[] = filename.split("\\.");
+        String extension = filenameArray[filenameArray.length-1];
+        if (extension.toLowerCase().compareTo("back")==0)
+            return true;
+        else
+            return false;
+    }
 //**********************************************************************************************************************//
 }
