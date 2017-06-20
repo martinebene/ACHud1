@@ -66,14 +66,14 @@
             android:src="@drawable/ic_action_cancel" />
 
         <ImageButton
-            android:id="@+id/ibRestoreHuds"
+            android:id="@+id/ibCopyHud"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|center_horizontal"
             android:layout_weight="1"
             android:adjustViewBounds="true"
             android:background="@drawable/ic_icono_bsckground_unselected"
-            android:src="@drawable/ic_action_goleft" />
+            android:src="@drawable/ic_action_copy" />
 
         <ImageButton
             android:id="@+id/ibAyudaInterfaceHuds"

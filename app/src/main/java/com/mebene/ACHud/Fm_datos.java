@@ -2,7 +2,12 @@ package com.mebene.ACHud;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,12 +37,12 @@ public class Fm_datos extends Fragment {
 
     private List<String> item_datos = null;
     private List<String> item_esquemas = null;
-    ImageButton ibProcesar;
+    ImageButton ibProcesar, ibOpen, ibDeleteDato;
     AcCore acCore;
     ListView listaArchivosDatos;
     Spinner listaArchivosEsquemas;
     EditText et_delay;
-    String archivoDatosSeleccionado, archivoEsquemaSeleccionado;
+    String archivoDatosSeleccionado, archivoEsquemaSeleccionado, rutaDatos;
 
 
     @Override
@@ -67,8 +72,9 @@ public class Fm_datos extends Fragment {
         item_datos = new ArrayList<String>();
         item_esquemas = new ArrayList<String>();
 
+        rutaDatos = Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator+ getResources().getString(R.string.s_datos_dir);
         TextView ruta = (TextView)  getView().findViewById(R.id.tV_ruta);
-        ruta.setText("Ruta de datos: "+Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator+ getResources().getString(R.string.s_datos_dir));
+        ruta.setText("Ruta de datos: "+rutaDatos);
 
         et_delay = (EditText) getView().findViewById(R.id.et_delay);
 
@@ -91,7 +97,7 @@ public class Fm_datos extends Fragment {
 
         for (int i = 0; i < files.length; i++){
             File file = files[i];
-            if (file.isFile() && isXML(file))
+            if (file.isFile() && acCore.isXML(file.getName()))
                 item_esquemas.add(file.getName());
         }
 
@@ -123,7 +129,6 @@ public class Fm_datos extends Fragment {
 
         //Botones
         ibProcesar = (ImageButton) getView().findViewById(R.id.ibProcesar);
-
         ibProcesar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -134,17 +139,84 @@ public class Fm_datos extends Fragment {
             }
         });
 
+
+        ibOpen = (ImageButton) getView().findViewById(R.id.ibOpen);
+        ibOpen.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                File file = new File(rutaDatos + File.separator +archivoDatosSeleccionado);
+
+                if (file.exists()) {
+                    Uri path = Uri.fromFile(file);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(path, "text/csv");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                    try {
+                        startActivity(intent);
+                    }
+
+                    catch (ActivityNotFoundException e) {
+                        Toast.makeText(getActivity(),
+                                "No Application Available to View File: " + e,
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                else {
+                    Toast.makeText(getActivity(),
+                            "Debe elegir un archivo de la lista",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                Log.i("tag4444", "Se selecciono para editar: " + archivoDatosSeleccionado);
+
+
+            }
+        });
+
+        ibDeleteDato = (ImageButton) getView().findViewById(R.id.ibDeleteDato);
+        ibDeleteDato.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                //archivoEsquemaSeleccionado = (String) listaArchivosEsquemas.getSelectedItem();
+                //int n = acCore.procesarDatos(archivoEsquemaSeleccionado, archivoDatosSeleccionado, et_delay.getText().toString());
+
+                final File file = new File(rutaDatos + File.separator +archivoDatosSeleccionado);
+
+                if (file.exists()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Esta accion eliminara el archivo seleccionado");
+                    builder.setMessage("Esta seguro que desea proceder?");
+                    builder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do nothing but close the dialog
+                            file.delete();
+                            onResume();
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+                else {
+                    Toast.makeText(getActivity(),
+                            "Debe elegir un archivo de la lista",
+                            Toast.LENGTH_SHORT).show();
+                }
+                Log.i("tag4444", "Se elimino: " + archivoDatosSeleccionado);
+            }
+        });
+
+
+
     }
 
-    private boolean isXML(File file) {
-
-        String filename = file.getName();
-        String filenameArray[] = filename.split("\\.");
-        String extension = filenameArray[filenameArray.length-1];
-        if (extension.toLowerCase().compareTo("xml")==0)
-            return true;
-        else
-            return false;
-    }
 
 }

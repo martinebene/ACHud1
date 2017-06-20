@@ -106,6 +106,7 @@ public class AcCore {
 
                 InputStream in = null;
                 OutputStream out = null;
+                OutputStream outBack = null;
 
                 String [] fl = assetManager.list(context.getString(R.string.s_esquemas_assets_dir));
 
@@ -113,17 +114,23 @@ public class AcCore {
                     try {
                         in = assetManager.open(context.getString(R.string.s_esquemas_assets_dir)+File.separator+fl[i]);
                         String newFileName = pathEsquemas +File.separator+ fl[i];
+                        String newFileNameBack = pathEsquemas +File.separator+ fl[i]+".back";
                         out = new FileOutputStream(newFileName);
+                        outBack = new FileOutputStream(newFileNameBack);
                         byte[] buffer = new byte[1024];
                         int read;
                         while ((read = in.read(buffer)) != -1) {
                             out.write(buffer, 0, read);
+                            outBack.write(buffer, 0, read);
                         }
                         in.close();
                         in = null;
                         out.flush();
+                        outBack.flush();
                         out.close();
+                        outBack.close();
                         out = null;
+                        outBack = null;
                     } catch (Exception e) {
                         System.out.println("Exception in copyFile" + e);
                     }
@@ -360,4 +367,17 @@ public class AcCore {
         return ultimaMedicion;
     }
 */
+
+//**********************************************************************************************************************//
+    public boolean isXML(String filename) {
+        String filenameArray[] = filename.split("\\.");
+        String extension = filenameArray[filenameArray.length-1];
+        if (extension.toLowerCase().compareTo("xml")==0)
+            return true;
+        else
+            return false;
+    }
+
+
+//**********************************************************************************************************************//
 }
