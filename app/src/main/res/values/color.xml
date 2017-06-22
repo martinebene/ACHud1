@@ -7,6 +7,7 @@
     <color name="fondo_obscuro">#2E2E2E</color>
     <color name="turquesa">#2ECCFA</color>
     <color name="turquesa_claro">#58D3F7</color>
+    <color name="turquesa_obscuro">#44a9c7</color>
     <color name="blanco">#ffffff</color>
     <color name="texto_clarito"> #E6E6E6</color>
     <color name="texto_obscuro">#2e2e2e</color>

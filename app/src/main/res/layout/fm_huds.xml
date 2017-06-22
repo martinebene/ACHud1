@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/lib/com.mebene.ACHud"
+    xmlns:app2="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -34,7 +35,17 @@
             android:background="@color/background_material_light"
             android:choiceMode="singleChoice"
             android:divider="@color/background_floating_material_dark"
-            android:listSelector="@color/dim_foreground_disabled_material_light" />
+            android:fadeScrollbars="false"
+            android:listSelector="@color/dim_foreground_disabled_material_light"
+            android:scrollbarThumbVertical="@drawable/my_scrollbar"
+            android:scrollbarTrackVertical="@color/dim_foreground_material_dark" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:src="@drawable/abc_ab_share_pack_holo_light" />
 
     </LinearLayout>
 
