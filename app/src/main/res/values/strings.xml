@@ -43,5 +43,7 @@
     <string name="s_abrir_adm_arch">Abrir en FileBrowser</string>
     <string name="s_restore_huds">Restaurar HUDs</string>
     <string name="s_refresh_huds">Recargar</string>
+    <string name="s_info_file">Detalles Archivo</string>
+    <string name="s_invert_order">Invertir Orden</string>
 
 </resources>

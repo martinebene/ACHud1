@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -60,14 +63,26 @@ public class Fm_datos extends Fragment {
         super.onAttach(activity);
         MainActivity ma = (MainActivity) activity;
         acCore = ma.acCore;
+    }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Add your menu entries here
+        inflater.inflate(R.menu.menu_datos, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 
+//********************************************************************************************************************************
     @Override
     public void onResume() {
         super.onResume();
-
 
         item_datos = new ArrayList<String>();
         item_esquemas = new ArrayList<String>();
@@ -104,6 +119,28 @@ public class Fm_datos extends Fragment {
         //Localizamos y llenamos las listas
         listaArchivosDatos = (ListView)  getView().findViewById(R.id.lst_archivos_datos);
         ArrayAdapter<String> fileList = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.item_de_lista, item_datos);
+
+        fileList.sort(new Comparator<String>()
+        {@Override
+        public int compare(String arg0, String arg1)
+        {
+            String filenamePartsArray0[] = arg0.split("_");
+            String filenamePartsArray1[] = arg1.split("_");
+            if(filenamePartsArray0[4].compareTo(filenamePartsArray1[4])!=0)
+                return filenamePartsArray0[4].compareTo(filenamePartsArray1[4]);
+            if(filenamePartsArray0[3].compareTo(filenamePartsArray1[3])!=0)
+                return filenamePartsArray0[3].compareTo(filenamePartsArray1[3]);
+            if(filenamePartsArray0[2].compareTo(filenamePartsArray1[2])!=0)
+                return filenamePartsArray0[2].compareTo(filenamePartsArray1[2]);
+            if(filenamePartsArray0[5].compareTo(filenamePartsArray1[5])!=0)
+                return filenamePartsArray0[5].compareTo(filenamePartsArray1[5]);
+            if(filenamePartsArray0[6].compareTo(filenamePartsArray1[6])!=0)
+                return filenamePartsArray0[6].compareTo(filenamePartsArray1[6]);
+            if(filenamePartsArray0[7].compareTo(filenamePartsArray1[7])!=0)
+                return filenamePartsArray0[7].compareTo(filenamePartsArray1[7]);
+            return arg0.compareToIgnoreCase(arg1); }});
+
+
         listaArchivosDatos.setAdapter(fileList);
         listaArchivosDatos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -186,8 +223,8 @@ public class Fm_datos extends Fragment {
 
                 if (file.exists()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Esta accion eliminara el archivo seleccionado");
-                    builder.setMessage("Esta seguro que desea proceder?");
+                    builder.setTitle("Esta seguro que desea proceder?");
+                    builder.setMessage("Esta accion eliminara el archivo " + archivoDatosSeleccionado + " de forma permanente");
                     builder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog

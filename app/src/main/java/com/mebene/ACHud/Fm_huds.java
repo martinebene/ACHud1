@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -113,6 +114,10 @@ public class Fm_huds extends Fragment {
         //Localizamos y llenamos las listas
         listaArchivosEsquemas = (ListView)  getView().findViewById(R.id.lst_archivos_esquemas);
         fileListAdaptrer = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.item_de_lista, item_esquemas);
+        fileListAdaptrer.sort(new Comparator<String>()
+        {@Override
+            public int compare(String arg0, String arg1)
+            { return arg0.compareToIgnoreCase(arg1); }});
         listaArchivosEsquemas.setAdapter(fileListAdaptrer);
 
         listaArchivosEsquemas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
