@@ -142,7 +142,14 @@ public class Fm_datos extends Fragment {
             }});
 
         listaArchivosEsquemas = (Spinner)  getView().findViewById(R.id.lstEsquemas);
-        ArrayAdapter fileListEsq = new ArrayAdapter<String>(getActivity().getApplicationContext(),android.R.layout.simple_spinner_dropdown_item, item_esquemas);
+        //ArrayAdapter fileListEsq = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.spinner_item, item_esquemas);
+        ArrayAdapter fileListEsq = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.item_de_lista, item_esquemas);
+        fileListEsq.sort(new Comparator<String>() {
+            @Override
+            public int compare(String arg0, String arg1) {
+                return arg0.compareTo(arg1);
+            }
+        });
         listaArchivosEsquemas.setAdapter(fileListEsq);
 /*
         listaArchivosEsquemas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -155,6 +162,7 @@ public class Fm_datos extends Fragment {
 */
 
 
+//***********************************************************************************************************************
         //Botones
         ibProcesar = (ImageButton) getView().findViewById(R.id.ibProcesar);
         ibProcesar.setOnClickListener(new View.OnClickListener() {
