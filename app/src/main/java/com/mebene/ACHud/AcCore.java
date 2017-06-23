@@ -195,8 +195,6 @@ public class AcCore {
             return -1;
         }
 
-
-
         if(f_datos.exists()){
             try{
                 Log.i("tag444", "entre f datos");

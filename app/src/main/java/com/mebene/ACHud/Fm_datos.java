@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,9 +31,14 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -43,6 +49,10 @@ public class Fm_datos extends Fragment {
     ImageButton ibProcesar, ibOpen, ibDeleteDato;
     AcCore acCore;
     ListView listaArchivosDatos;
+    ArrayAdapter<String> fileListAdapter;
+    public final int ORDEN_ASCENDENTE = 1;
+    public final int ORDEN_DESCENDENTE = -1;
+    int order = ORDEN_ASCENDENTE;
     Spinner listaArchivosEsquemas;
     EditText et_delay;
     String archivoDatosSeleccionado, archivoEsquemaSeleccionado, rutaDatos;
@@ -84,6 +94,8 @@ public class Fm_datos extends Fragment {
     public void onResume() {
         super.onResume();
 
+        //final int order=1;
+        archivoDatosSeleccionado=null;
         item_datos = new ArrayList<String>();
         item_esquemas = new ArrayList<String>();
 
@@ -118,30 +130,9 @@ public class Fm_datos extends Fragment {
 
         //Localizamos y llenamos las listas
         listaArchivosDatos = (ListView)  getView().findViewById(R.id.lst_archivos_datos);
-        ArrayAdapter<String> fileList = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.item_de_lista, item_datos);
-
-        fileList.sort(new Comparator<String>()
-        {@Override
-        public int compare(String arg0, String arg1)
-        {
-            String filenamePartsArray0[] = arg0.split("_");
-            String filenamePartsArray1[] = arg1.split("_");
-            if(filenamePartsArray0[4].compareTo(filenamePartsArray1[4])!=0)
-                return filenamePartsArray0[4].compareTo(filenamePartsArray1[4]);
-            if(filenamePartsArray0[3].compareTo(filenamePartsArray1[3])!=0)
-                return filenamePartsArray0[3].compareTo(filenamePartsArray1[3]);
-            if(filenamePartsArray0[2].compareTo(filenamePartsArray1[2])!=0)
-                return filenamePartsArray0[2].compareTo(filenamePartsArray1[2]);
-            if(filenamePartsArray0[5].compareTo(filenamePartsArray1[5])!=0)
-                return filenamePartsArray0[5].compareTo(filenamePartsArray1[5]);
-            if(filenamePartsArray0[6].compareTo(filenamePartsArray1[6])!=0)
-                return filenamePartsArray0[6].compareTo(filenamePartsArray1[6]);
-            if(filenamePartsArray0[7].compareTo(filenamePartsArray1[7])!=0)
-                return filenamePartsArray0[7].compareTo(filenamePartsArray1[7]);
-            return arg0.compareToIgnoreCase(arg1); }});
-
-
-        listaArchivosDatos.setAdapter(fileList);
+        fileListAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.item_de_lista, item_datos);
+        sortList(order);
+        listaArchivosDatos.setAdapter(fileListAdapter);
         listaArchivosDatos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -188,22 +179,17 @@ public class Fm_datos extends Fragment {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(path, "text/csv");
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
                     try {
                         startActivity(intent);
                     }
-
                     catch (ActivityNotFoundException e) {
                         Toast.makeText(getActivity(),
                                 "No Application Available to View File: " + e,
                                 Toast.LENGTH_SHORT).show();
                     }
-
                 }
                 else {
-                    Toast.makeText(getActivity(),
-                            "Debe elegir un archivo de la lista",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Debe elegir un archivo de la lista", Toast.LENGTH_SHORT).show();
                 }
 
                 Log.i("tag4444", "Se selecciono para editar: " + archivoDatosSeleccionado);
@@ -243,17 +229,183 @@ public class Fm_datos extends Fragment {
                     alert.show();
                 }
                 else {
-                    Toast.makeText(getActivity(),
-                            "Debe elegir un archivo de la lista",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Debe elegir un archivo de la lista", Toast.LENGTH_SHORT).show();
                 }
                 Log.i("tag4444", "Se elimino: " + archivoDatosSeleccionado);
             }
         });
 
+    }
 
+//********************************************************************************************************************************
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i("tag4444", "Se ingerso al menu con: " + item.getItemId());
+        File file=null;
+        switch (item.getItemId()) {
+            case (R.id.refresh):
+                onResume();
+                Toast.makeText(getActivity(),"Vista refrescada", Toast.LENGTH_SHORT).show();
+                return true;
+            case (R.id.abrir_con_fbrowser):
+                file = new File(rutaDatos);
+                if (file.exists()) {
+                    //Uri path = Uri.fromFile(file);
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setDataAndType(Uri.fromFile(file), "*/*");
+                    //intent.setDataAndType(Uri.fromFile(file), "text/csv");
+                    //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    try {
+                        startActivity(intent);
+                        //startActivity(Intent.createChooser(intent, "Open folder"));
+                    }
+                    catch (ActivityNotFoundException e) {
+                        Toast.makeText(getActivity(), "No Application Available to View File: " + e, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                Log.i("tag4444", "Se selecciono: " + archivoDatosSeleccionado);
+                return true;
+            case (R.id.invertOrder):
+                if(order == ORDEN_ASCENDENTE) {
+                    order = ORDEN_DESCENDENTE;
+                    sortList(order);
+                }
+                else{
+                    order = ORDEN_ASCENDENTE;
+                    sortList(order);
+                }
+                onResume();
+                Toast.makeText(getActivity(), "Datos reordenados", Toast.LENGTH_SHORT).show();
+                return true;
+            case (R.id.infoFile):
+                file = new File(rutaDatos + File.separator +archivoDatosSeleccionado);
+                if (file.exists()) {
+                    String lastLine="";
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(file));
+                        String last = br.readLine();
+                        while (last != null) {
+                            lastLine = last;
+                            last = br.readLine();
+                        }
+                    }catch (Exception e){ e.printStackTrace(); }
+                    String[] arrayValores = lastLine.split(",");
+                    if(arrayValores.length != MedicionDeEntorno.EDA.values().length){
+                        Toast.makeText(getActivity(), "Archivo de datos no valido", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    int size = (int)(file.length()/1024);
+                    DecimalFormat format = new DecimalFormat("###,###.##");
+                    long lastmodified = file.lastModified();
+                    Date dateModified = new Date();
+                    dateModified.setTime(lastmodified);
+                    SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd 'a las' HH:mm:ss");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Detalles");
+                    builder.setMessage(
+                            "Nombre:\n"+archivoDatosSeleccionado+"\n\n"
+                            +"Ruta:\n"+rutaDatos+"\n\n"
+                            +"Tamaño:\n"+format.format(size)+"Kb\n\n"
+                            +"Ultima Modificacion:\n"+dateFormater.format(dateModified)+"\n\n"
+                            +"Tiempo de medicion:\n"
+                                    +arrayValores[MedicionDeEntorno.EDA.CR_HH_MED.ordinal()]+":"
+                                    +arrayValores[MedicionDeEntorno.EDA.CR_mm_MED.ordinal()]+":"
+                                    +arrayValores[MedicionDeEntorno.EDA.CR_ss_MED.ordinal()]+","
+                                    +arrayValores[MedicionDeEntorno.EDA.CR_SSS_MED.ordinal()]+"\n\n"
+                            +"Cantidad de registros:\n"+arrayValores[MedicionDeEntorno.EDA.NRO_MED.ordinal()]
+                    );
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                } else{
+                    Toast.makeText(getActivity(),"Debe elegir un archivo de la lista", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
+//********************************************************************************************************************************
+    public void sortList(int order) {
+        if(order >= 0){
+            fileListAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String arg0, String arg1) {
+                    File file0 = new File(rutaDatos + File.separator +arg0);
+                    File file1 = new File(rutaDatos + File.separator +arg1);
+                    return String.valueOf(file0.lastModified()).compareTo(String.valueOf(file1.lastModified()));
+                }
+            });
+            fileListAdapter.notifyDataSetChanged();
+        }
+        else{
+            fileListAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String arg0, String arg1) {
+                    File file0 = new File(rutaDatos + File.separator + arg0);
+                    File file1 = new File(rutaDatos + File.separator + arg1);
+                    return String.valueOf(file1.lastModified()).compareTo(String.valueOf(file0.lastModified()));
+                }
+            });
+            fileListAdapter.notifyDataSetChanged();
+        }
     }
 
 
-}
+//********************************************************************************************************************************
+ /*   public void sortList(int order) {
+        if(order >= 0){
+            fileListAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String arg0, String arg1) {
+                    String filenamePartsArray0[] = arg0.split("_");
+                    String filenamePartsArray1[] = arg1.split("_");
+                    if (filenamePartsArray0[4].compareTo(filenamePartsArray1[4]) != 0)
+                        return filenamePartsArray0[4].compareTo(filenamePartsArray1[4]);
+                    if (filenamePartsArray0[3].compareTo(filenamePartsArray1[3]) != 0)
+                        return filenamePartsArray0[3].compareTo(filenamePartsArray1[3]);
+                    if (filenamePartsArray0[2].compareTo(filenamePartsArray1[2]) != 0)
+                        return filenamePartsArray0[2].compareTo(filenamePartsArray1[2]);
+                    if (filenamePartsArray0[5].compareTo(filenamePartsArray1[5]) != 0)
+                        return filenamePartsArray0[5].compareTo(filenamePartsArray1[5]);
+                    if (filenamePartsArray0[6].compareTo(filenamePartsArray1[6]) != 0)
+                        return filenamePartsArray0[6].compareTo(filenamePartsArray1[6]);
+                    if (filenamePartsArray0[7].compareTo(filenamePartsArray1[7]) != 0)
+                        return filenamePartsArray0[7].compareTo(filenamePartsArray1[7]);
+                    return arg0.compareToIgnoreCase(arg1);
+                }
+            });
+            fileListAdapter.notifyDataSetChanged();
+        }
+        else{
+            fileListAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String arg0, String arg1) {
+                    String filenamePartsArray0[] = arg1.split("_");
+                    String filenamePartsArray1[] = arg0.split("_");
+                    if (filenamePartsArray0[4].compareTo(filenamePartsArray1[4]) != 0)
+                        return filenamePartsArray0[4].compareTo(filenamePartsArray1[4]);
+                    if (filenamePartsArray0[3].compareTo(filenamePartsArray1[3]) != 0)
+                        return filenamePartsArray0[3].compareTo(filenamePartsArray1[3]);
+                    if (filenamePartsArray0[2].compareTo(filenamePartsArray1[2]) != 0)
+                        return filenamePartsArray0[2].compareTo(filenamePartsArray1[2]);
+                    if (filenamePartsArray0[5].compareTo(filenamePartsArray1[5]) != 0)
+                        return filenamePartsArray0[5].compareTo(filenamePartsArray1[5]);
+                    if (filenamePartsArray0[6].compareTo(filenamePartsArray1[6]) != 0)
+                        return filenamePartsArray0[6].compareTo(filenamePartsArray1[6]);
+                    if (filenamePartsArray0[7].compareTo(filenamePartsArray1[7]) != 0)
+                        return filenamePartsArray0[7].compareTo(filenamePartsArray1[7]);
+                    return arg0.compareToIgnoreCase(arg1);
+                }
+            });
+            fileListAdapter.notifyDataSetChanged();
+        }
+    }
+*/
+
+    }
