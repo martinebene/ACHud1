@@ -34,7 +34,7 @@
     <string name="s_magnetico">Campo Magnetico</string>
     <string name="s_cronometro">Cronometro</string>
     <string name="s_delay">Delay</string>
-    <string name="s_esquemas">Esquemas de HUD</string>
+    <string name="s_esquemas">Esquemas HUD</string>
     <string name="s_esquemas_dir">Esquemas</string>
     <string name="s_esquemas_assets_dir">esquemas</string>
     <string name="s_datos_dir">Datos</string>

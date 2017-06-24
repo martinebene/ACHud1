@@ -41,11 +41,12 @@
             android:scrollbarTrackVertical="@color/dim_foreground_material_dark" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/imageViewHuds"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_margin="10dp"
             android:layout_weight="0.5"
-            android:src="@drawable/abc_ab_share_pack_holo_light" />
+            android:padding="20dp" />
 
     </LinearLayout>
 

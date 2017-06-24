@@ -103,7 +103,7 @@ public class Fm_datos extends Fragment {
         TextView ruta = (TextView)  getView().findViewById(R.id.tV_ruta);
         ruta.setText("Ruta de datos: "+rutaDatos);
 
-        et_delay = (EditText) getView().findViewById(R.id.et_delay);
+        et_delay = (EditText) getView().findViewById(R.id.et_del_min);
 
         Log.e("tag33", "ruta: " + Environment.getExternalStorageDirectory());
         Log.e("tag34", "ruta: " + File.separator);

@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -91,6 +93,10 @@ public class Fm_huds extends Fragment {
         item_esquemas = new ArrayList<String>();
         archivoEsquemaSeleccionado = null;
 
+        final ImageView ImageViewHuds = (ImageView) getView().findViewById(R.id.imageViewHuds);
+
+        ImageViewHuds.setImageResource(R.drawable.preview);
+
         rutaHuds = Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator+ getResources().getString(R.string.s_esquemas_dir);
         TextView ruta = (TextView)  getView().findViewById(R.id.tV_ruta_huds);
         ruta.setText("Ruta de HUD's: "+ rutaHuds);
@@ -125,7 +131,12 @@ public class Fm_huds extends Fragment {
                                     int position, long id) {
 
                 archivoEsquemaSeleccionado = (String) listaArchivosEsquemas.getItemAtPosition(position);
-
+                File file = new File(rutaHuds + File.separator +nameNoExt(archivoEsquemaSeleccionado)+".png");
+                if(file.exists()) {
+                    ImageViewHuds.setImageBitmap(BitmapFactory.decodeFile(rutaHuds + File.separator + nameNoExt(archivoEsquemaSeleccionado) + ".png"));
+                } else{
+                    ImageViewHuds.setImageResource(R.drawable.no_preview);
+                }
             }});
 
 
@@ -306,8 +317,8 @@ public class Fm_huds extends Fragment {
                     Log.i("tag4444", "file to copy: " + fileToCopy.getName());
                     if(acCore.isBack(fileToCopy.getName())){
                         Log.i("tag4444", "file to copy is back: " + fileToCopy.getName());
-                        Log.i("tag4444", "file to copy sin back: " +  nameNoBack(fileToCopy.getName()));
-                        File fileRestored = new File(rutaHuds + File.separator + nameNoBack(fileToCopy.getName()));
+                        Log.i("tag4444", "file to copy sin back: " +  nameNoExt(fileToCopy.getName()));
+                        File fileRestored = new File(rutaHuds + File.separator + nameNoExt(fileToCopy.getName()));
                         try {
                             copyFile(fileToCopy, fileRestored);
                         } catch (IOException e) {
@@ -350,7 +361,7 @@ public class Fm_huds extends Fragment {
         }
     }
 //********************************************************************************************************************************
-    private String nameNoBack(String name) {
+    private String nameNoExt(String name) {
         String filenameArray[] = name.split("\\.");
         String newFilename="";
         for(int i=0; i<(filenameArray.length-1);i++)

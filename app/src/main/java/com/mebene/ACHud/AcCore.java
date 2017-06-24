@@ -114,15 +114,21 @@ public class AcCore {
                     try {
                         in = assetManager.open(context.getString(R.string.s_esquemas_assets_dir)+File.separator+fl[i]);
                         String newFileName = pathEsquemas +File.separator+ fl[i];
-                        String newFileNameBack = pathEsquemas +File.separator+ fl[i]+".back";
                         out = new FileOutputStream(newFileName);
-                        outBack = new FileOutputStream(newFileNameBack);
+
                         byte[] buffer = new byte[1024];
                         int read;
                         while ((read = in.read(buffer)) != -1) {
                             out.write(buffer, 0, read);
-                            outBack.write(buffer, 0, read);
                         }
+                        if(isXML(fl[i])){
+                            String newFileNameBack = pathEsquemas +File.separator+ fl[i]+".back";
+                            outBack = new FileOutputStream(newFileNameBack);
+                            while ((read = in.read(buffer)) != -1) {
+                                outBack.write(buffer, 0, read);
+                            }
+                        }
+
                         in.close();
                         in = null;
                         out.flush();
