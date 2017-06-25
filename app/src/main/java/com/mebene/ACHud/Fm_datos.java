@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,15 +47,17 @@ public class Fm_datos extends Fragment {
 
     private List<String> item_datos = null;
     private List<String> item_esquemas = null;
-    ImageButton ibProcesar, ibOpen, ibDeleteDato;
+    ImageButton ibProcesar, ibInfoData, ibDeleteDato, ibRenameData;
     AcCore acCore;
     ListView listaArchivosDatos;
     ArrayAdapter<String> fileListAdapter;
     public final int ORDEN_ASCENDENTE = 1;
     public final int ORDEN_DESCENDENTE = -1;
     int order = ORDEN_ASCENDENTE;
+    int min_delay_np=0, seg_delay_np=0, millis_delay_np=0, delay_total_in_millis=0;
+    int irm=0;
     Spinner listaArchivosEsquemas;
-    EditText et_delay;
+    EditText et_irm;
     String archivoDatosSeleccionado, archivoEsquemaSeleccionado, rutaDatos;
 
 
@@ -103,7 +106,7 @@ public class Fm_datos extends Fragment {
         TextView ruta = (TextView)  getView().findViewById(R.id.tV_ruta);
         ruta.setText("Ruta de datos: "+rutaDatos);
 
-        et_delay = (EditText) getView().findViewById(R.id.et_del_min);
+        //et_delay = (EditText) getView().findViewById(R.id.et_del_min);
 
         Log.e("tag33", "ruta: " + Environment.getExternalStorageDirectory());
         Log.e("tag34", "ruta: " + File.separator);
@@ -151,15 +154,45 @@ public class Fm_datos extends Fragment {
             }
         });
         listaArchivosEsquemas.setAdapter(fileListEsq);
-/*
-        listaArchivosEsquemas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
 
-                archivoEsquemaSeleccionado = (String) listaArchivosEsquemas.getItemAtPosition(position);
+        //*****SPINERS
+        NumberPicker np_min = (NumberPicker) getView().findViewById(R.id.nP_min_delay);
+        NumberPicker np_seg = (NumberPicker) getView().findViewById(R.id.nP_seg_delay);
+        NumberPicker np_millis = (NumberPicker) getView().findViewById(R.id.nP_millis_delay);
 
-            }});
-*/
+        np_min.setMinValue(0);
+        np_min.setMaxValue(59);
+        np_seg.setMinValue(0);
+        np_seg.setMaxValue(59);
+        np_millis.setDisplayedValues(null);
+        final String[] millisValues ={"000","050","100","150","200","250","300","350","400","450","500","550","600","650","700","750","800","850","900","950"};
+        np_millis.setMinValue(0);
+        //np_millis.setMaxValue(millisValues.length);
+        np_millis.setMaxValue(millisValues.length - 1);
+        np_millis.setDisplayedValues(millisValues);
+
+        np_min.setOnValueChangedListener(new NumberPicker.OnValueChangeListener(){
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int oldval, int newval) {
+                min_delay_np = newval;
+            }
+        });
+        np_seg.setOnValueChangedListener(new NumberPicker.OnValueChangeListener(){
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int oldval, int newval) {
+                seg_delay_np = newval;
+            }
+        });
+        np_millis.setOnValueChangedListener(new NumberPicker.OnValueChangeListener(){
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int oldval, int newval) {
+                millis_delay_np = Integer.valueOf(millisValues[newval]);
+            }
+        });
+
+        et_irm = (EditText) getView().findViewById(R.id.et_irm);
+
+        et_irm.setText(String.format("%03d", irm));
 
 
 //***********************************************************************************************************************
@@ -168,41 +201,66 @@ public class Fm_datos extends Fragment {
         ibProcesar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                delay_total_in_millis = (min_delay_np * 60 * 1000) + (seg_delay_np * 1000) + millis_delay_np;
                 archivoEsquemaSeleccionado = (String) listaArchivosEsquemas.getSelectedItem();
-                int n = acCore.procesarDatos(archivoEsquemaSeleccionado, archivoDatosSeleccionado, et_delay.getText().toString());
+                int n = acCore.procesarDatos(archivoEsquemaSeleccionado, archivoDatosSeleccionado, delay_total_in_millis, irm);
 
                 Log.e("tag444", "se procesaron: " + n + " lineas.");
             }
         });
 
 
-        ibOpen = (ImageButton) getView().findViewById(R.id.ibOpen);
-        ibOpen.setOnClickListener(new View.OnClickListener() {
+        ibInfoData = (ImageButton) getView().findViewById(R.id.ibInfoData);
+        ibInfoData.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 File file = new File(rutaDatos + File.separator +archivoDatosSeleccionado);
-
                 if (file.exists()) {
-                    Uri path = Uri.fromFile(file);
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(path, "text/csv");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    String lastLine="";
                     try {
-                        startActivity(intent);
+                        BufferedReader br = new BufferedReader(new FileReader(file));
+                        String last = br.readLine();
+                        while (last != null) {
+                            lastLine = last;
+                            last = br.readLine();
+                        }
+                    }catch (Exception e){ e.printStackTrace(); }
+                    String[] arrayValores = lastLine.split(",");
+                    if(arrayValores.length != MedicionDeEntorno.EDA.values().length){
+                        Toast.makeText(getActivity(), "Archivo de datos no valido", Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                    catch (ActivityNotFoundException e) {
-                        Toast.makeText(getActivity(),
-                                "No Application Available to View File: " + e,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
+                    int size = (int)(file.length()/1024);
+                    DecimalFormat format = new DecimalFormat("###,###.##");
+                    long lastmodified = file.lastModified();
+                    Date dateModified = new Date();
+                    dateModified.setTime(lastmodified);
+                    SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd 'a las' HH:mm:ss");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Detalles");
+                    builder.setMessage(
+                            "Nombre:\n"+archivoDatosSeleccionado+"\n\n"
+                                    +"Ruta:\n"+rutaDatos+"\n\n"
+                                    +"Tamaño:\n"+format.format(size)+"Kb\n\n"
+                                    +"Ultima Modificacion:\n"+dateFormater.format(dateModified)+"\n\n"
+                                    +"Tiempo de medicion:\n"
+                                    +arrayValores[MedicionDeEntorno.EDA.CR_HH_MED.ordinal()]+":"
+                                    +arrayValores[MedicionDeEntorno.EDA.CR_mm_MED.ordinal()]+":"
+                                    +arrayValores[MedicionDeEntorno.EDA.CR_ss_MED.ordinal()]+","
+                                    +arrayValores[MedicionDeEntorno.EDA.CR_SSS_MED.ordinal()]+"\n\n"
+                                    +"Cantidad de registros:\n"+arrayValores[MedicionDeEntorno.EDA.NRO_MED.ordinal()]+"\n\n"
+                                    +"Intervalo de refresco:\n"+((Integer.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()])) / Integer.valueOf(arrayValores[MedicionDeEntorno.EDA.NRO_MED.ordinal()]))
+                    );
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                } else{
                     Toast.makeText(getActivity(),"Debe elegir un archivo de la lista", Toast.LENGTH_SHORT).show();
                 }
-
-                Log.i("tag4444", "Se selecciono para editar: " + archivoDatosSeleccionado);
-
-
             }
         });
 
@@ -243,6 +301,44 @@ public class Fm_datos extends Fragment {
             }
         });
 
+        ibRenameData = (ImageButton) getView().findViewById(R.id.ibRenameData);
+        ibRenameData.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                //archivoEsquemaSeleccionado = (String) listaArchivosEsquemas.getSelectedItem();
+                //int n = acCore.procesarDatos(archivoEsquemaSeleccionado, archivoDatosSeleccionado, et_delay.getText().toString());
+/*
+                final File file = new File(rutaDatos + File.separator +archivoDatosSeleccionado);
+
+                if (file.exists()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Esta seguro que desea proceder?");
+                    builder.setMessage("Esta accion eliminara el archivo " + archivoDatosSeleccionado + " de forma permanente");
+                    builder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do nothing but close the dialog
+                            file.delete();
+                            onResume();
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+                else {
+                    Toast.makeText(getActivity(),"Debe elegir un archivo de la lista", Toast.LENGTH_SHORT).show();
+                }
+                Log.i("tag4444", "Se elimino: " + archivoDatosSeleccionado);
+                */
+                Log.i("tag4444", "Delays: " + min_delay_np +" - "+ seg_delay_np +" - "+ millis_delay_np);
+            }
+        });
     }
 
 //********************************************************************************************************************************
@@ -285,53 +381,28 @@ public class Fm_datos extends Fragment {
                 onResume();
                 Toast.makeText(getActivity(), "Datos reordenados", Toast.LENGTH_SHORT).show();
                 return true;
-            case (R.id.infoFile):
+            case (R.id.openFile):
+
                 file = new File(rutaDatos + File.separator +archivoDatosSeleccionado);
+
                 if (file.exists()) {
-                    String lastLine="";
+                    Uri path = Uri.fromFile(file);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(path, "text/csv");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     try {
-                        BufferedReader br = new BufferedReader(new FileReader(file));
-                        String last = br.readLine();
-                        while (last != null) {
-                            lastLine = last;
-                            last = br.readLine();
-                        }
-                    }catch (Exception e){ e.printStackTrace(); }
-                    String[] arrayValores = lastLine.split(",");
-                    if(arrayValores.length != MedicionDeEntorno.EDA.values().length){
-                        Toast.makeText(getActivity(), "Archivo de datos no valido", Toast.LENGTH_SHORT).show();
-                        return true;
+                        startActivity(intent);
                     }
-                    int size = (int)(file.length()/1024);
-                    DecimalFormat format = new DecimalFormat("###,###.##");
-                    long lastmodified = file.lastModified();
-                    Date dateModified = new Date();
-                    dateModified.setTime(lastmodified);
-                    SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd 'a las' HH:mm:ss");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Detalles");
-                    builder.setMessage(
-                            "Nombre:\n"+archivoDatosSeleccionado+"\n\n"
-                            +"Ruta:\n"+rutaDatos+"\n\n"
-                            +"Tamaño:\n"+format.format(size)+"Kb\n\n"
-                            +"Ultima Modificacion:\n"+dateFormater.format(dateModified)+"\n\n"
-                            +"Tiempo de medicion:\n"
-                                    +arrayValores[MedicionDeEntorno.EDA.CR_HH_MED.ordinal()]+":"
-                                    +arrayValores[MedicionDeEntorno.EDA.CR_mm_MED.ordinal()]+":"
-                                    +arrayValores[MedicionDeEntorno.EDA.CR_ss_MED.ordinal()]+","
-                                    +arrayValores[MedicionDeEntorno.EDA.CR_SSS_MED.ordinal()]+"\n\n"
-                            +"Cantidad de registros:\n"+arrayValores[MedicionDeEntorno.EDA.NRO_MED.ordinal()]
-                    );
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                } else{
+                    catch (ActivityNotFoundException e) {
+                        Toast.makeText(getActivity(),
+                                "No Application Available to View File: " + e,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
                     Toast.makeText(getActivity(),"Debe elegir un archivo de la lista", Toast.LENGTH_SHORT).show();
                 }
+                Log.i("tag4444", "Se selecciono para editar: " + archivoDatosSeleccionado);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -366,54 +437,4 @@ public class Fm_datos extends Fragment {
 
 
 //********************************************************************************************************************************
- /*   public void sortList(int order) {
-        if(order >= 0){
-            fileListAdapter.sort(new Comparator<String>() {
-                @Override
-                public int compare(String arg0, String arg1) {
-                    String filenamePartsArray0[] = arg0.split("_");
-                    String filenamePartsArray1[] = arg1.split("_");
-                    if (filenamePartsArray0[4].compareTo(filenamePartsArray1[4]) != 0)
-                        return filenamePartsArray0[4].compareTo(filenamePartsArray1[4]);
-                    if (filenamePartsArray0[3].compareTo(filenamePartsArray1[3]) != 0)
-                        return filenamePartsArray0[3].compareTo(filenamePartsArray1[3]);
-                    if (filenamePartsArray0[2].compareTo(filenamePartsArray1[2]) != 0)
-                        return filenamePartsArray0[2].compareTo(filenamePartsArray1[2]);
-                    if (filenamePartsArray0[5].compareTo(filenamePartsArray1[5]) != 0)
-                        return filenamePartsArray0[5].compareTo(filenamePartsArray1[5]);
-                    if (filenamePartsArray0[6].compareTo(filenamePartsArray1[6]) != 0)
-                        return filenamePartsArray0[6].compareTo(filenamePartsArray1[6]);
-                    if (filenamePartsArray0[7].compareTo(filenamePartsArray1[7]) != 0)
-                        return filenamePartsArray0[7].compareTo(filenamePartsArray1[7]);
-                    return arg0.compareToIgnoreCase(arg1);
-                }
-            });
-            fileListAdapter.notifyDataSetChanged();
-        }
-        else{
-            fileListAdapter.sort(new Comparator<String>() {
-                @Override
-                public int compare(String arg0, String arg1) {
-                    String filenamePartsArray0[] = arg1.split("_");
-                    String filenamePartsArray1[] = arg0.split("_");
-                    if (filenamePartsArray0[4].compareTo(filenamePartsArray1[4]) != 0)
-                        return filenamePartsArray0[4].compareTo(filenamePartsArray1[4]);
-                    if (filenamePartsArray0[3].compareTo(filenamePartsArray1[3]) != 0)
-                        return filenamePartsArray0[3].compareTo(filenamePartsArray1[3]);
-                    if (filenamePartsArray0[2].compareTo(filenamePartsArray1[2]) != 0)
-                        return filenamePartsArray0[2].compareTo(filenamePartsArray1[2]);
-                    if (filenamePartsArray0[5].compareTo(filenamePartsArray1[5]) != 0)
-                        return filenamePartsArray0[5].compareTo(filenamePartsArray1[5]);
-                    if (filenamePartsArray0[6].compareTo(filenamePartsArray1[6]) != 0)
-                        return filenamePartsArray0[6].compareTo(filenamePartsArray1[6]);
-                    if (filenamePartsArray0[7].compareTo(filenamePartsArray1[7]) != 0)
-                        return filenamePartsArray0[7].compareTo(filenamePartsArray1[7]);
-                    return arg0.compareToIgnoreCase(arg1);
-                }
-            });
-            fileListAdapter.notifyDataSetChanged();
-        }
-    }
-*/
-
     }

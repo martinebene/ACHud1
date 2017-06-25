@@ -153,9 +153,10 @@ public class AcCore {
 
 
     //**********************************************************************************************************************//
-    public int procesarDatos(String fn_esquema, String fn_datos, String delay){
+    public int procesarDatos(String fn_esquema, String fn_datos, int delay, int irm_gui){
 
         int n=0;
+        int irm=0;
         String readLine=null; //,  esquema="";
 
         Log.i("tag444", "procesar datos con: " + fn_esquema +" "+ fn_datos + " " + delay);
@@ -229,14 +230,18 @@ public class AcCore {
 
                 Log.i("tag4444", "Esto devuelve:... "+esquemaHud.getIntervaloRef());
 
+                if(irm_gui>esquemaHud.getIntervaloRef()){
+                    irm = irm_gui;
+                } else {
+                    irm = (int) esquemaHud.getIntervaloRef();
+                }
                 while ((readLine = br.readLine()) != null) {
 
                     String[] arrayValores = readLine.split(",");
                     String lineaSrt="";
 
-                    if ((Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]) - tMedicionAnterior) > esquemaHud.getIntervaloRef()) {
+                    if ((Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]) - tMedicionAnterior) > irm) {
                         tMedicionAnterior = Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]);
-
 
                         if (arrayValoresAnterior != null) {
 
@@ -283,13 +288,13 @@ public class AcCore {
     }
 
 
-    private String[] aplicarDelay(String[] arrayValores, String delayString) {
+    private String[] aplicarDelay(String[] arrayValores, int delayString) {
 
         long delayLong;
         String hora="", minuto="", segundo="", milisegundo="";
 
         try {
-            delayLong = Long.valueOf(delayString);
+            delayLong = delayString;
         }catch (NumberFormatException e){
             delayLong=0;
         }

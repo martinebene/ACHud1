@@ -18,8 +18,8 @@
         android:orderInCategory="30"
         app:showAsAction="never" />
     <item
-        android:id="@+id/infoFile"
-        android:title="@string/s_info_file"
+        android:id="@+id/openFile"
+        android:title="@string/s_open_file"
         android:orderInCategory="40"
         app:showAsAction="never" />
 

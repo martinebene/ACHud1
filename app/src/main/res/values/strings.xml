@@ -45,5 +45,7 @@
     <string name="s_refresh_huds">Recargar</string>
     <string name="s_info_file">Detalles Archivo</string>
     <string name="s_invert_order">Invertir Orden</string>
+    <string name="s_open_file">Abrir archivo</string>
+    <string name="s_irm">IRM</string>
 
 </resources>
