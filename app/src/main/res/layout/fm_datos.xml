@@ -141,8 +141,13 @@
                             android:layout_marginTop="5dp"
                             android:layout_weight="1"
                             android:background="@color/background_floating_material_light"
+                            android:clickable="false"
+                            android:cursorVisible="false"
                             android:ems="10"
-                            android:inputType="number"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:gravity="center"
+                            android:textAlignment="center"
                             android:textColor="@color/texto_obscuro" />
 
                         <ImageButton
@@ -266,7 +271,7 @@
                         android:layout_weight="1" />
 
                     <TextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/textView9"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
@@ -282,7 +287,7 @@
                         android:layout_weight="1" />
 
                     <TextView
-                        android:id="@+id/textView3"
+                        android:id="@+id/textView10"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"

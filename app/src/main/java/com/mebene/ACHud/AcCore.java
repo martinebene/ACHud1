@@ -157,7 +157,8 @@ public class AcCore {
 
         int n=0;
         int irm=0;
-        String readLine=null; //,  esquema="";
+        int nroLine=0;
+        String readLine=null;
 
         Log.i("tag444", "procesar datos con: " + fn_esquema +" "+ fn_datos + " " + delay);
 
@@ -235,15 +236,21 @@ public class AcCore {
                 } else {
                     irm = (int) esquemaHud.getIntervaloRef();
                 }
+
+                nroLine=0;
+
                 while ((readLine = br.readLine()) != null) {
 
                     String[] arrayValores = readLine.split(",");
+                    //aca chequear si no es un achivo con una linea valida
+
                     String lineaSrt="";
 
                     if ((Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]) - tMedicionAnterior) > irm) {
                         tMedicionAnterior = Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]);
 
                         if (arrayValoresAnterior != null) {
+                            nroLine++;
 
                             arrayValoresAnterior[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()];
                             arrayValoresAnterior[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()];
@@ -260,13 +267,13 @@ public class AcCore {
                             for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
                                 lineaSrt = lineaSrt.replaceAll("\\{" + valor.toString() + "\\}", arrayValoresConDelay[valor.ordinal()]);
                             }
+                            lineaSrt = lineaSrt.replaceAll("\\{" + "NRO_LINE" + "\\}", String.valueOf(nroLine));
 
                             fout.write(lineaSrt);
                             Log.i("tag444", lineaSrt);
                         }
 
                     arrayValoresAnterior = arrayValores;
-                    n++;
                     }
                 }
 
@@ -284,7 +291,7 @@ public class AcCore {
             Toast.makeText(context, context.getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
         }
 
-        return n;
+        return nroLine;
     }
 
 

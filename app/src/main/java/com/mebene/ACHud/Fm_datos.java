@@ -47,7 +47,7 @@ public class Fm_datos extends Fragment {
 
     private List<String> item_datos = null;
     private List<String> item_esquemas = null;
-    ImageButton ibProcesar, ibInfoData, ibDeleteDato, ibRenameData;
+    ImageButton ibProcesar, ibInfoData, ibDeleteDato, ibRenameData, ibIrmDown, ibIrmUp;
     AcCore acCore;
     ListView listaArchivosDatos;
     ArrayAdapter<String> fileListAdapter;
@@ -56,6 +56,7 @@ public class Fm_datos extends Fragment {
     int order = ORDEN_ASCENDENTE;
     int min_delay_np=0, seg_delay_np=0, millis_delay_np=0, delay_total_in_millis=0;
     int irm=0;
+    final int irm_step = 50;
     Spinner listaArchivosEsquemas;
     EditText et_irm;
     String archivoDatosSeleccionado, archivoEsquemaSeleccionado, rutaDatos;
@@ -209,7 +210,7 @@ public class Fm_datos extends Fragment {
             }
         });
 
-
+        //************************************************************************************************************************
         ibInfoData = (ImageButton) getView().findViewById(R.id.ibInfoData);
         ibInfoData.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -264,6 +265,7 @@ public class Fm_datos extends Fragment {
             }
         });
 
+        //************************************************************************************************************************
         ibDeleteDato = (ImageButton) getView().findViewById(R.id.ibDeleteDato);
         ibDeleteDato.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -301,6 +303,7 @@ public class Fm_datos extends Fragment {
             }
         });
 
+        //************************************************************************************************************************
         ibRenameData = (ImageButton) getView().findViewById(R.id.ibRenameData);
         ibRenameData.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -337,6 +340,28 @@ public class Fm_datos extends Fragment {
                 Log.i("tag4444", "Se elimino: " + archivoDatosSeleccionado);
                 */
                 Log.i("tag4444", "Delays: " + min_delay_np +" - "+ seg_delay_np +" - "+ millis_delay_np);
+            }
+        });
+
+        //************************************************************************************************************************
+        ibIrmDown = (ImageButton) getView().findViewById(R.id.ib_irm_down);
+        ibIrmDown.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if((irm - irm_step)>0) {
+                    irm = irm - irm_step;
+                }else{
+                    irm = 0;
+                }
+                et_irm.setText(String.format("%03d", irm));
+            }
+            });
+
+        //************************************************************************************************************************
+        ibIrmUp = (ImageButton) getView().findViewById(R.id.ib_irm_up);
+        ibIrmUp.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                irm = irm + irm_step;
+                et_irm.setText(String.format("%03d", irm));
             }
         });
     }
