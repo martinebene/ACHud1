@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -308,38 +309,52 @@ public class Fm_datos extends Fragment {
         ibRenameData.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                //archivoEsquemaSeleccionado = (String) listaArchivosEsquemas.getSelectedItem();
-                //int n = acCore.procesarDatos(archivoEsquemaSeleccionado, archivoDatosSeleccionado, et_delay.getText().toString());
-/*
-                final File file = new File(rutaDatos + File.separator +archivoDatosSeleccionado);
-
-                if (file.exists()) {
+                if(archivoDatosSeleccionado != null){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Esta seguro que desea proceder?");
-                    builder.setMessage("Esta accion eliminara el archivo " + archivoDatosSeleccionado + " de forma permanente");
-                    builder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do nothing but close the dialog
-                            file.delete();
-                            onResume();
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    builder.setTitle("Renombrar");
+                    builder.setMessage("Ingrese el nuevo nombre:");
+                    // Set up the input
+                    final EditText input = new EditText(getActivity());
+                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+                    input.setText(archivoDatosSeleccionado);
+                    builder.setView(input);
+
+                    // Set up the buttons
+                    builder.setPositiveButton("Renombrar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                            String newFileName = input.getText().toString();
+                            if (newFileName != null) {
+                                if (!acCore.isCsv(newFileName))
+                                    newFileName = newFileName + ".csv";
+                                File fileOriginal = new File(rutaDatos + File.separator + archivoDatosSeleccionado);
+                                File fileCopy = new File(rutaDatos + File.separator + newFileName);
+
+                                if (!fileCopy.exists()) {
+                                    fileOriginal.renameTo(fileCopy);
+                                    onResume();
+                                } else {
+                                    AlertDialog.Builder builderError = new AlertDialog.Builder(getActivity());
+                                    builderError.setTitle("No fue posible realizar la copia");
+                                    builderError.setMessage("Ya existia un archivo de datos con el nombre selccionado, reintente con un nombre distinto");
+                                    builderError.show();
+                                }
+                                Log.i("tag4444", "Se copio: " + newFileName);
+                            }
                         }
                     });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
                 }
-                else {
+                else{
                     Toast.makeText(getActivity(),"Debe elegir un archivo de la lista", Toast.LENGTH_SHORT).show();
                 }
-                Log.i("tag4444", "Se elimino: " + archivoDatosSeleccionado);
-                */
-                Log.i("tag4444", "Delays: " + min_delay_np +" - "+ seg_delay_np +" - "+ millis_delay_np);
             }
         });
 

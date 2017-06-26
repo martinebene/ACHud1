@@ -238,25 +238,27 @@ public class Fm_huds extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String newFileName = input.getText().toString();
-                            if (!acCore.isXML(newFileName))
-                                newFileName = newFileName + ".xml";
-                            File fileOriginal = new File(rutaHuds + File.separator + archivoEsquemaSeleccionado);
-                            File fileCopy = new File(rutaHuds + File.separator + newFileName);
-                            if (!fileCopy.exists()) {
-                                try {
-                                    copyFile(fileOriginal, fileCopy);
-                                } catch (IOException e) {
-                                    Toast.makeText(getActivity(), "No se pudo copiar el archivo: " + "\n" + e, Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
+                            if(newFileName!=null) {
+                                if (!acCore.isXML(newFileName))
+                                    newFileName = newFileName + ".xml";
+                                File fileOriginal = new File(rutaHuds + File.separator + archivoEsquemaSeleccionado);
+                                File fileCopy = new File(rutaHuds + File.separator + newFileName);
+                                if (!fileCopy.exists()) {
+                                    try {
+                                        acCore.copyFile(fileOriginal, fileCopy);
+                                    } catch (IOException e) {
+                                        Toast.makeText(getActivity(), "No se pudo copiar el archivo: " + "\n" + e, Toast.LENGTH_SHORT).show();
+                                        e.printStackTrace();
+                                    }
+                                    onResume();
+                                } else {
+                                    AlertDialog.Builder builderError = new AlertDialog.Builder(getActivity());
+                                    builderError.setTitle("No fue posible realizar la copia");
+                                    builderError.setMessage("Ya existia un HUD con el nombre selccionado, reintente con un nombre distinto");
+                                    builderError.show();
                                 }
-                                onResume();
-                            } else {
-                                AlertDialog.Builder builderError = new AlertDialog.Builder(getActivity());
-                                builderError.setTitle("No fue posible realizar la copia");
-                                builderError.setMessage("Ya existia un HUD con el nombre selccionado, reintente con un nombre distinto");
-                                builderError.show();
+                                Log.i("tag4444", "Se copio: " + newFileName);
                             }
-                            Log.i("tag4444", "Se copio: " + newFileName);
                         }
                     });
                     builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -320,7 +322,7 @@ public class Fm_huds extends Fragment {
                         Log.i("tag4444", "file to copy sin back: " +  nameNoExt(fileToCopy.getName()));
                         File fileRestored = new File(rutaHuds + File.separator + nameNoExt(fileToCopy.getName()));
                         try {
-                            copyFile(fileToCopy, fileRestored);
+                            acCore.copyFile(fileToCopy, fileRestored);
                         } catch (IOException e) {
                             AlertDialog.Builder builderError = new AlertDialog.Builder(getActivity());
                             builderError.setTitle("ERROR en restauracion");
@@ -339,27 +341,6 @@ public class Fm_huds extends Fragment {
     }
 
 
-
-
-//********************************************************************************************************************************
-    public void copyFile(File src, File dst) throws IOException {
-        InputStream in = new FileInputStream(src);
-        try {
-            OutputStream out = new FileOutputStream(dst);
-            try {
-                // Transfer bytes from in to out
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            } finally {
-                out.close();
-            }
-        } finally {
-            in.close();
-        }
-    }
 //********************************************************************************************************************************
     private String nameNoExt(String name) {
         String filenameArray[] = name.split("\\.");
