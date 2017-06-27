@@ -43,6 +43,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class Fm_datos extends Fragment {
 
@@ -203,13 +206,172 @@ public class Fm_datos extends Fragment {
         ibProcesar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                final EsquemaHUD esquemaHud;;
+                final File f_datos, f_esquema;
+                String lastLineFDatos="";
+
                 delay_total_in_millis = (min_delay_np * 60 * 1000) + (seg_delay_np * 1000) + millis_delay_np;
                 archivoEsquemaSeleccionado = (String) listaArchivosEsquemas.getSelectedItem();
-                int n = acCore.procesarDatos(archivoEsquemaSeleccionado, archivoDatosSeleccionado, delay_total_in_millis, irm);
 
-                Log.e("tag444", "se procesaron: " + n + " lineas.");
+
+
+                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                    f_datos = new File(Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
+                            +getResources().getString(R.string.s_datos_dir)+ File.separator + archivoDatosSeleccionado);
+                    f_esquema = new File(Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
+                            +getResources().getString(R.string.s_esquemas_dir)+ File.separator + archivoEsquemaSeleccionado);
+                } else{
+                    AlertDialog.Builder builderError = new AlertDialog.Builder(getActivity());
+                    builderError.setTitle("ERROR");
+                    builderError.setMessage("No es posble para la aplicacion acceder al almacenamiento, verifique los permisos");
+                    builderError.show();
+                    return;
+                }
+
+                if(f_esquema.exists()){
+                    try{
+                        Log.i("tag444", "entre f esquemas");
+                        FileInputStream fstream = new FileInputStream(f_esquema);
+                        DataInputStream in = new DataInputStream(fstream);
+
+                        SAXParserFactory factory = SAXParserFactory.newInstance();
+                        SAXParser parser = factory.newSAXParser();
+                        EsquemaHandler handler = new EsquemaHandler();
+                        parser.parse(in, handler);
+                        esquemaHud = handler.getEsquema();
+
+                        in.close();
+
+                        Log.i("tag555", "esquema Ext: " + esquemaHud.getExt());
+                        Log.i("tag555", "esquema Header: " + esquemaHud.getHeader());
+                        Log.i("tag555", "esquema intSub: " + esquemaHud.getIntro_sub() );
+                        Log.i("tag555", "esquema medsub: " + esquemaHud.getMed_sub() );
+                        Log.i("tag555", "esquema Delay: " + esquemaHud.getDelay() );
+
+                    }catch (Exception e){
+                        Log.e("Procesar", "Error al procesar esquema" + e);
+                        return;}
+                }else{
+                    Toast.makeText(getActivity(), getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(f_datos));
+                    String last = br.readLine();
+                    while (last != null) {
+                        lastLineFDatos = last;
+                        last = br.readLine();
+                    }
+                }catch (Exception e){ e.printStackTrace(); }
+                String[] arrayValores = lastLineFDatos.split(",");
+                if(arrayValores.length != MedicionDeEntorno.EDA.values().length) {
+                    Toast.makeText(getActivity(), "Archivo de datos no valido", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                SimpleDateFormat formateador = new SimpleDateFormat("dd_MM_yy_HH_mm_ss");
+                String filename_out = "ACHUD_Out_" + formateador.format(new Date()) +"."+esquemaHud.getExt();
+                long lastmodified = f_datos.lastModified();
+                Date dateModified = new Date();
+                dateModified.setTime(lastmodified);
+                SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd 'a las' HH:mm:ss");
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Generar HUD");
+                builder.setMessage(
+                                "Datos de origen:\n"+archivoDatosSeleccionado+"\n\n"
+                                +"Fecha de datos:\n"+dateFormater.format(dateModified)+"\n\n"
+                                +"Tiempo de medicion:\n"
+                                +arrayValores[MedicionDeEntorno.EDA.CR_HH_MED.ordinal()]+":"
+                                +arrayValores[MedicionDeEntorno.EDA.CR_mm_MED.ordinal()]+":"
+                                +arrayValores[MedicionDeEntorno.EDA.CR_ss_MED.ordinal()]+","
+                                +arrayValores[MedicionDeEntorno.EDA.CR_SSS_MED.ordinal()]+"\n\n"
+                                +"Esquema HUD:\n"+archivoEsquemaSeleccionado+"\n\n"
+                                +"Tipo de salida:\n"+esquemaHud.getExt()+"\n\n"
+                                +"Archivo de salida:\n"
+                );
+                // Set up the input
+                final EditText input = new EditText(getActivity());
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+                input.setText(filename_out);
+                builder.setView(input);
+
+                builder.setPositiveButton("GENERAR", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        String fname_out = input.getText().toString();
+                        if(!(fname_out.length()>0)){
+                            Toast.makeText(getActivity(), "Nombre no valido", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if(!(acCore.isExt(fname_out, esquemaHud.getExt()))){
+                            fname_out = fname_out + "." + esquemaHud.getExt();
+                        }
+                        File f_out = new File(Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
+                                +getResources().getString(R.string.s_out_dir), fname_out);
+
+                        File f_out2  = acCore.procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+
+                        Toast.makeText(getActivity(), "Salida: " + f_out2.getName(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+                builder.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+
+
+
+
+
+
+
+
+
+
+
+
+               // int n = acCore.procesarDatos(archivoEsquemaSeleccionado, archivoDatosSeleccionado, delay_total_in_millis, irm);
+
+                //Log.e("tag444", "se procesaron: " + n + " lineas.");
             }
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //************************************************************************************************************************
         ibInfoData = (ImageButton) getView().findViewById(R.id.ibInfoData);

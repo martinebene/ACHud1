@@ -218,6 +218,8 @@ public class MedicionDeEntorno {
     public String getTimeFormatedFromMillis(long millis, String formato) {
         //TimeZone tz = TimeZone.getDefault();
 
+        //reemplazar por algo mas matematico
+
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
         final SimpleDateFormat sdfParser = new SimpleDateFormat(formato);

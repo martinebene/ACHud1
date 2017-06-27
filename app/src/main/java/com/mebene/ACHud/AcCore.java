@@ -155,7 +155,104 @@ public class AcCore {
 
 
     //**********************************************************************************************************************//
-    public int procesarDatos(String fn_esquema, String fn_datos, int delay, int irm_gui){
+    public File procesarDatos(File f_out, File f_datos, EsquemaHUD esquema, int delay, int irm_gui){
+//File f_out2  = acCore.procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+        int n=0;
+        int irm=0;
+        int nroLine=0;
+        String readLine=null;
+
+        OutputStreamWriter fout=null;
+
+        if(f_datos.exists()){
+            try{
+                Log.i("tag444", "entre f datos");
+
+                if (f_out != null)
+                    fout = new OutputStreamWriter(new FileOutputStream(f_out));
+                else {
+                    Log.e("Procesar", "Error al abrir archivo de salida");
+                    return null;}
+
+                FileInputStream fstream = new FileInputStream(f_datos);
+                DataInputStream in = new DataInputStream(fstream);
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+                fout.write(esquema.getHeader());
+
+                Long tMedicionAnterior = 0L;
+
+                String[] arrayValoresAnterior= null;
+
+                Log.i("tag4444", "Esto devuelve:... "+esquema.getIntervaloRef());
+
+                if(irm_gui>esquema.getIntervaloRef()){
+                    irm = irm_gui;
+                } else {
+                    irm = (int) esquema.getIntervaloRef();
+                }
+
+                nroLine=0;
+
+                while ((readLine = br.readLine()) != null) {
+
+                    String[] arrayValores = readLine.split(",");
+                    //aca chequear si no es un achivo con una linea valida
+
+                    String lineaSrt="";
+
+                    if ((Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]) - tMedicionAnterior) > irm) {
+                        tMedicionAnterior = Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]);
+
+                        if (arrayValoresAnterior != null) {
+                            nroLine++;
+
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()];
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()];
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()];
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()];
+
+                            String[] arrayValoresConDelay = aplicarDelay(arrayValoresAnterior, delay + esquema.getDelay());
+
+                            if(Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()])<esquema.getIntroTime())
+                                lineaSrt = esquema.getIntro_sub();
+                            else
+                                lineaSrt = esquema.getMed_sub();
+
+                            for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
+                                lineaSrt = lineaSrt.replaceAll("\\{" + valor.toString() + "\\}", arrayValoresConDelay[valor.ordinal()]);
+                            }
+                            lineaSrt = lineaSrt.replaceAll("\\{" + "NRO_LINE" + "\\}", String.valueOf(nroLine));
+
+                            fout.write(lineaSrt);
+                            Log.i("tag444", lineaSrt);
+                        }
+
+                    arrayValoresAnterior = arrayValores;
+                    }
+                }
+
+                fout.write(esquema.getFooter());
+
+                Log.i("tag444", "lineas al final del readline de datos: "+String.valueOf(n));
+                in.close();
+                fout.close();
+
+            }catch (Exception e){
+                Log.e("tag444", "Error al procesar: " + e);
+                return null;}
+
+        } else{
+            Toast.makeText(context, context.getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
+        }
+
+        return f_out;
+    }
+
+
+
+    //**********************************************************************************************************************//
+  /*  public int procesarDatos(String fn_esquema, String fn_datos, int delay, int irm_gui){
 
         int n=0;
         int irm=0;
@@ -295,7 +392,7 @@ public class AcCore {
 
         return nroLine;
     }
-
+*/
 
 //**********************************************************************************************************************//
     private String[] aplicarDelay(String[] arrayValores, int delayString) {
@@ -425,6 +522,16 @@ public class AcCore {
         String filenameArray[] = filename.split("\\.");
         String extension = filenameArray[filenameArray.length-1];
         if (extension.toLowerCase().compareTo("csv")==0)
+            return true;
+        else
+            return false;
+    }
+
+    //**********************************************************************************************************************//
+    public boolean isExt(String filename, String ext) {
+        String filenameArray[] = filename.split("\\.");
+        String extension = filenameArray[filenameArray.length-1];
+        if (extension.toLowerCase().compareTo(ext)==0)
             return true;
         else
             return false;
