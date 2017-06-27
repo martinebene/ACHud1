@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.SAXParser;
@@ -296,8 +297,8 @@ public class AcCore {
     }
 
 
+//**********************************************************************************************************************//
     private String[] aplicarDelay(String[] arrayValores, int delayString) {
-
         long delayLong;
         String hora="", minuto="", segundo="", milisegundo="";
 
@@ -307,7 +308,6 @@ public class AcCore {
             delayLong=0;
         }
 
-
         hora = String.valueOf(TimeUnit.MILLISECONDS.toHours(delayLong));
         minuto = String.valueOf(TimeUnit.MILLISECONDS.toMinutes(delayLong) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(delayLong)));
         segundo = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(delayLong) -
@@ -315,36 +315,32 @@ public class AcCore {
         //milisegundo = String.valueOf((delayLong - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(delayLong)))/10);
         milisegundo = String.valueOf((delayLong - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(delayLong))));
 
-        arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()] =   String.format("%01d",
+        arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()] =   String.format(Locale.getDefault(),"%01d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()]) +
                 Long.valueOf(hora) );
-
-        arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()] =   String.format("%02d",
+        arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()] =   String.format(Locale.getDefault(),"%02d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()]) +
                         Long.valueOf(minuto) );
-
-        arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()] =   String.format("%02d",
+        arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()] =   String.format(Locale.getDefault(),"%02d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()]) +
                         Long.valueOf(segundo) );
-
-        arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()] =   String.format("%03d",
+        arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()] =   String.format(Locale.getDefault(),"%03d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()]) +
                         Long.valueOf(milisegundo) );
-
-
-        arrayValores[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] =   String.format("%01d",
+        arrayValores[MedicionDeEntorno.EDA.CR_HH_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()];
+        arrayValores[MedicionDeEntorno.EDA.CR_mm_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()];
+        arrayValores[MedicionDeEntorno.EDA.CR_ss_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()];
+        arrayValores[MedicionDeEntorno.EDA.CR_SSS_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()];
+        arrayValores[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] =   String.format(Locale.getDefault(),"%01d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()]) +
                         Long.valueOf(hora) );
-
-        arrayValores[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] =   String.format("%02d",
+        arrayValores[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] =   String.format(Locale.getDefault(),"%02d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()]) +
                         Long.valueOf(minuto) );
-
-        arrayValores[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()] =   String.format("%02d",
+        arrayValores[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()] =   String.format(Locale.getDefault(),"%02d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()]) +
                         Long.valueOf(segundo) );
-
-        arrayValores[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()] =   String.format("%03d",
+        arrayValores[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()] =   String.format(Locale.getDefault(),"%03d",
                 Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()]) +
                         Long.valueOf(milisegundo) );
 
