@@ -63,7 +63,7 @@ public class Fm_datos extends Fragment {
     final int irm_step = 50;
     Spinner listaArchivosEsquemas;
     EditText et_irm;
-    String archivoDatosSeleccionado, archivoEsquemaSeleccionado, rutaDatos;
+    String archivoDatosSeleccionado, archivoEsquemaSeleccionado, rutaDatos, rutaDeSalida;
 
 
     @Override
@@ -108,6 +108,9 @@ public class Fm_datos extends Fragment {
         item_esquemas = new ArrayList<String>();
 
         rutaDatos = Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator+ getResources().getString(R.string.s_datos_dir);
+        rutaDeSalida = Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
+                +getResources().getString(R.string.s_out_dir);
+
         TextView ruta = (TextView)  getView().findViewById(R.id.tV_ruta);
         ruta.setText("Ruta de datos: "+rutaDatos);
 
@@ -281,16 +284,19 @@ public class Fm_datos extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Generar HUD");
                 builder.setMessage(
-                                "Datos de origen:\n"+archivoDatosSeleccionado+"\n\n"
-                                +"Fecha de datos:\n"+dateFormater.format(dateModified)+"\n\n"
-                                +"Tiempo de medicion:\n"
+                                "Datos de origen:\n"+archivoDatosSeleccionado+"\n"
+                                +"del "+dateFormater.format(dateModified)+"\n\n"
+                                +"Tiempo de medicion: "
                                 +arrayValores[MedicionDeEntorno.EDA.CR_HH_MED.ordinal()]+":"
                                 +arrayValores[MedicionDeEntorno.EDA.CR_mm_MED.ordinal()]+":"
                                 +arrayValores[MedicionDeEntorno.EDA.CR_ss_MED.ordinal()]+","
                                 +arrayValores[MedicionDeEntorno.EDA.CR_SSS_MED.ordinal()]+"\n\n"
                                 +"Esquema HUD:\n"+archivoEsquemaSeleccionado+"\n\n"
-                                +"Tipo de salida:\n"+esquemaHud.getExt()+"\n\n"
-                                +"Archivo de salida:\n"
+                                +"Tipo de salida: "+esquemaHud.getExt()+"\n\n"
+                                +"IRM: "+irm+"\n\n"
+                                +"Delay: "+min_delay_np+":"+seg_delay_np+","+millis_delay_np+"\n\n"
+                                +"Ruta de destino:\n"+rutaDeSalida+"\n\n"
+                                +"Archivo de salida:"
                 );
                 // Set up the input
                 final EditText input = new EditText(getActivity());
@@ -310,13 +316,30 @@ public class Fm_datos extends Fragment {
                         if(!(acCore.isExt(fname_out, esquemaHud.getExt()))){
                             fname_out = fname_out + "." + esquemaHud.getExt();
                         }
-                        File f_out = new File(Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
-                                +getResources().getString(R.string.s_out_dir), fname_out);
+                        final File f_out = new File(rutaDeSalida, fname_out);
 
-                        File f_out2  = acCore.procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
-
-                        Toast.makeText(getActivity(), "Salida: " + f_out2.getName(), Toast.LENGTH_SHORT).show();
-
+                        if (f_out.exists()) {
+                            AlertDialog.Builder builderConf = new AlertDialog.Builder(getActivity());
+                            builderConf.setTitle("Existe un archivo de salida con el mismo nombre");
+                            builderConf.setMessage("Esta accion reemplazara el archivo " + fname_out + " original");
+                            builderConf.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+                                    dialog.dismiss();
+                                }
+                            });
+                            builderConf.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog alertConf = builderConf.create();
+                            alertConf.show();
+                        }
+                        else {
+                            procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+                        }
                     }
                 });
 
@@ -331,45 +354,8 @@ public class Fm_datos extends Fragment {
                 alert.show();
 
 
-
-
-
-
-
-
-
-
-
-
-
-               // int n = acCore.procesarDatos(archivoEsquemaSeleccionado, archivoDatosSeleccionado, delay_total_in_millis, irm);
-
-                //Log.e("tag444", "se procesaron: " + n + " lineas.");
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -542,6 +528,53 @@ public class Fm_datos extends Fragment {
             }
         });
     }
+
+//********************************************************************************************************************************
+private void procesarDatos(File f_out, File f_datos, EsquemaHUD esquema, int delay, int irm_gui){
+
+    final File f_out_result=acCore.procesarDatos(f_out, f_datos, esquema, delay, irm_gui);
+
+    if(f_out_result != null){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Archivo HUD creado con exito");
+        builder.setMessage(f_out_result.getName());
+        builder.setPositiveButton("Compartir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if (f_out_result.exists()) {
+                    //Uri path = Uri.fromFile(f_out_result);
+                    Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+                    intentShareFile.setType( "application/pdf");
+                    intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+f_out_result));
+                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Sharing File...");
+                    intentShareFile.putExtra(Intent.EXTRA_TEXT, "Sharing File...");
+
+
+                    try {
+                        startActivity(Intent.createChooser(intentShareFile, "Share File"));
+                    }
+                    catch (ActivityNotFoundException e) {
+                        Toast.makeText(getActivity(),"No Application Available to View File: " + e, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Continuar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+        //Toast.makeText(getActivity(), "Archivo " + f_out_result.getName() + " creado con exito.", Toast.LENGTH_SHORT).show();
+    }else{
+        Toast.makeText(getActivity(), "No fue posible generar el archivo", Toast.LENGTH_SHORT).show();
+    }
+
+}
 
 //********************************************************************************************************************************
     @Override
