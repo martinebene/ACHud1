@@ -321,7 +321,7 @@ public class Fm_datos extends Fragment {
                         if (f_out.exists()) {
                             AlertDialog.Builder builderConf = new AlertDialog.Builder(getActivity());
                             builderConf.setTitle("Existe un archivo de salida con el mismo nombre");
-                            builderConf.setMessage("Esta accion reemplazara el archivo " + fname_out + " original");
+                            builderConf.setMessage("Esta accion reemplazara el archivo \"" + fname_out + "\" original");
                             builderConf.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
@@ -427,7 +427,7 @@ public class Fm_datos extends Fragment {
                 if (file.exists()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("Esta seguro que desea proceder?");
-                    builder.setMessage("Esta accion eliminara el archivo " + archivoDatosSeleccionado + " de forma permanente");
+                    builder.setMessage("Esta accion eliminara el archivo \"" + archivoDatosSeleccionado + "\" de forma permanente");
                     builder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -546,9 +546,8 @@ private void procesarDatos(File f_out, File f_datos, EsquemaHUD esquema, int del
                     Intent intentShareFile = new Intent(Intent.ACTION_SEND);
                     intentShareFile.setType( "application/pdf");
                     intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+f_out_result));
-                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Sharing File...");
-                    intentShareFile.putExtra(Intent.EXTRA_TEXT, "Sharing File...");
-
+                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Compartido por AC_HUD: \"" + f_out_result.getName()+"\"");
+                    intentShareFile.putExtra(Intent.EXTRA_TEXT, "Archivo creado con AC_HUD, mas informacion en www.achud.com.ar");
 
                     try {
                         startActivity(Intent.createChooser(intentShareFile, "Share File"));
