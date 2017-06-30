@@ -168,6 +168,10 @@ public class AcCore {
             try{
                 Log.i("tag444", "entre f datos");
 
+                for(GrafVal i:esquema.grafValVector) {
+                    Log.i("tag444", "nuevo grafVector: " + i);
+                }
+
                 if (f_out != null)
                     fout = new OutputStreamWriter(new FileOutputStream(f_out));
                 else {
@@ -222,6 +226,7 @@ public class AcCore {
                             for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
                                 lineaSrt = lineaSrt.replaceAll("\\{" + valor.toString() + "\\}", arrayValoresConDelay[valor.ordinal()]);
                             }
+
                             lineaSrt = lineaSrt.replaceAll("\\{" + "NRO_LINE" + "\\}", String.valueOf(nroLine));
 
                             fout.write(lineaSrt);

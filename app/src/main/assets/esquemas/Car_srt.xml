@@ -4,6 +4,31 @@
     <Extension>srt</Extension>
     <Delay>0</Delay>
     <IntervaloRef>0</IntervaloRef>
+    <GrafVal>
+        <InputTag>ACEL_X</InputTag>
+        <OutputTag>ACEL_X</OutputTag>
+        <MaxVal>2</MaxVal>
+        <MinVal>1</MinVal>
+        <PChar>)</PChar>
+        <NChar>(</NChar>
+    </GrafVal>
+    <GrafVal>
+        <InputTag>ACEL_Y</InputTag>
+        <OutputTag>ACEL_Y</OutputTag>
+        <MaxVal>25</MaxVal>
+        <MinVal>1</MinVal>
+        <PChar>)</PChar>
+        <NChar>(</NChar>
+    </GrafVal>
+    <GrafVal>
+        <InputTag>ACEL_Z</InputTag>
+        <OutputTag>ACEL_Z</OutputTag>
+        <MaxVal>15</MaxVal>
+        <MinVal>1</MinVal>
+        <PChar>^</PChar>
+        <NChar>V</NChar>
+    </GrafVal>
+
     <Header>
     </Header>
     <IntroSub Time="5000">{NRO_LINE}

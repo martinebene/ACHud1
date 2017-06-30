@@ -67,6 +67,20 @@ public class MedicionDeEntorno {
         ACEL_MI_Z
     }
 
+    public enum EDAG {
+        ACEL_GR_X1,
+        ACEL_GR_X2,
+        ACEL_GR_X3,
+        ACEL_GR_X4,
+        ACEL_GR_Y1,
+        ACEL_GR_Y2,
+        ACEL_GR_Y3,
+        ACEL_GR_Y4,
+        ACEL_GR_Z1,
+        ACEL_GR_Z2,
+        ACEL_GR_Z3,
+        ACEL_GR_Z4,
+    }
 
     //**********************************************************************************************************************//
     public MedicionDeEntorno(SharedPreferences l_sharedPref, Context context) {
