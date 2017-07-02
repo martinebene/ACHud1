@@ -71,21 +71,21 @@ public class EsquemaHandler extends DefaultHandler {
 
 
                 Log.i("Tag777", "en fin de grafval 1" + grafVal.toString());
-
+/*
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
-                if((grafVal.getInputTagName()!=null)&&(grafVal.getOutputTagGrafName()!=null)&&(grafVal.getMax()<0) && (grafVal.getMin()<0) &&  (grafVal.getpChar()!=null) && (grafVal.getnChar()!=null) ){
+*/
+                if((grafVal.getInputTagName()!=null)&&(grafVal.getOutputTagGrafName()!=null)&&(!(grafVal.getMax()<0)) && (!(grafVal.getMin()<0)) &&  (grafVal.getpChar()!=null) && (grafVal.getnChar()!=null) ){
                     Log.i("Tag777", "en fin de grafval");
-                    try {
+  /*                  try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
+*/
                     grafVal.setComplete(true);
                     esquemaHUD.grafValVector.add(grafVal);
                 }
@@ -98,15 +98,16 @@ public class EsquemaHandler extends DefaultHandler {
             } else if((localName.equals("OutputTag")) && inGrafVal && (grafVal!=null)){
                 grafVal.setOutputTagGrafName(sbTexto.toString());
             } else if((localName.equals("MaxVal")) && inGrafVal && (grafVal!=null)){
-                grafVal.setMax(Integer.valueOf(sbTexto.toString()));
+                grafVal.setMax(Float.valueOf(sbTexto.toString()));
             } else if((localName.equals("MinVal")) && inGrafVal && (grafVal!=null)){
-                grafVal.setMin(Integer.valueOf(sbTexto.toString()));
+                grafVal.setMin(Float.valueOf(sbTexto.toString()));
+            } else if((localName.equals("NLineGraf")) && inGrafVal && (grafVal!=null)){
+                grafVal.setNLineGraf(Integer.valueOf(sbTexto.toString()));
             } else if((localName.equals("PChar")) && inGrafVal && (grafVal!=null)){
                 grafVal.setpChar(sbTexto.toString());
             } else if((localName.equals("NChar")) && inGrafVal && (grafVal!=null)){
                 grafVal.setnChar(sbTexto.toString());
             }
-
 
             sbTexto.setLength(0);
         }

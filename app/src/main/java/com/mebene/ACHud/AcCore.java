@@ -168,10 +168,6 @@ public class AcCore {
             try{
                 Log.i("tag444", "entre f datos");
 
-                for(GrafVal i:esquema.grafValVector) {
-                    Log.i("tag444", "nuevo grafVector: " + i);
-                }
-
                 if (f_out != null)
                     fout = new OutputStreamWriter(new FileOutputStream(f_out));
                 else {
@@ -188,7 +184,7 @@ public class AcCore {
 
                 String[] arrayValoresAnterior= null;
 
-                Log.i("tag4444", "Esto devuelve:... "+esquema.getIntervaloRef());
+                //Log.i("tag4444", "Esto devuelve:... "+esquema.getIntervaloRef());
 
                 if(irm_gui>esquema.getIntervaloRef()){
                     irm = irm_gui;
@@ -223,6 +219,33 @@ public class AcCore {
                             else
                                 lineaSrt = esquema.getMed_sub();
 
+
+
+
+                            Log.i("tag444", "tamaño del vector: " + esquema.grafValVector.size());
+
+                            for(GrafVal gv:esquema.grafValVector) {
+                                Log.i("tag444", "nuevo grafVector: " + gv);
+
+                                float valor = Float.valueOf(arrayValoresConDelay[MedicionDeEntorno.EDA.valueOf(gv.getInputTagName()).ordinal()]);
+
+                                lineaSrt = lineaSrt.replaceAll("\\{" + gv.getOutputTagGrafName() + "\\}", numToGraf( valor, gv.getMin(), gv.getMax(), gv.getNLineGraf() ,gv.getnChar(), gv.getpChar() ));
+
+
+
+
+
+
+                            }
+
+
+
+
+
+
+
+
+
                             for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
                                 lineaSrt = lineaSrt.replaceAll("\\{" + valor.toString() + "\\}", arrayValoresConDelay[valor.ordinal()]);
                             }
@@ -254,6 +277,32 @@ public class AcCore {
         return f_out;
     }
 
+    private String numToGraf(float valor, float min, float max, int nLineGraf, String nChar, String pChar) {
+
+        String graf ="";
+        float charsPerVal = ((max - min)/nLineGraf);
+
+        if((Math.abs(valor) > min) && (Math.abs(valor) <max)) {
+            if(valor>0) {
+                for (float i = 0; i < (charsPerVal*(Math.abs(valor))); ) {
+                    graf = graf + pChar;
+                    i=i + charsPerVal;
+                }
+            }else{
+                for (float i = 0; i < (charsPerVal*(Math.abs(valor))); ) {
+                    graf = graf + nChar;
+                    i=i + charsPerVal;
+                }
+            }
+        }
+        if((Math.abs(valor) > max)){
+            for(int i=0; i < nLineGraf;i++){
+                graf = graf + pChar;
+            }
+        }
+
+        return graf;
+    }
 
 
     //**********************************************************************************************************************//

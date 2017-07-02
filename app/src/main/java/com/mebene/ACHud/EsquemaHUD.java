@@ -12,8 +12,7 @@ public class EsquemaHUD {
     int delay=0;
     long intervaloRef = 0;
     long introTime = 0;
-    public Vector<GrafVal> grafValVector= new Vector<GrafVal>();
-
+    public Vector<GrafVal> grafValVector;
  /*   boolean isAcelGraf=false;
     int AcelGrafAct = 0;
     int acelMin=0;
@@ -23,7 +22,7 @@ public class EsquemaHUD {
     String negativeChar="<";
 */
     public EsquemaHUD() {
-
+        grafValVector= new Vector<GrafVal>();
     }
 
     public long getIntroTime() {
@@ -147,12 +146,14 @@ public class EsquemaHUD {
 
 class GrafVal {
     String outputTagGrafName, inputTagName, pChar, nChar;
-    int min, max;
+    float min, max;
+    int NLineGraf;
     boolean isComplete;
 
         public GrafVal() {
             min = 0;
             max = 0;
+            NLineGraf = 0;
             outputTagGrafName=null;
             inputTagName=null;
             pChar=null;
@@ -192,19 +193,19 @@ class GrafVal {
         this.nChar = nChar;
     }
 
-    public int getMin() {
+    public float getMin() {
         return min;
     }
 
-    public void setMin(int min) {
+    public void setMin(float min) {
         this.min = min;
     }
 
-    public int getMax() {
+    public float getMax() {
         return max;
     }
 
-    public void setMax(int max) {
+    public void setMax(float max) {
         this.max = max;
     }
 
@@ -214,6 +215,14 @@ class GrafVal {
 
     public void setComplete(boolean complete) {
         isComplete = complete;
+    }
+
+    public int getNLineGraf() {
+        return NLineGraf;
+    }
+
+    public void setNLineGraf(int NLineGraf) {
+        this.NLineGraf = NLineGraf;
     }
 
     @Override

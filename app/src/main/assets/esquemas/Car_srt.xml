@@ -7,26 +7,29 @@
     <GrafVal>
         <InputTag>ACEL_X</InputTag>
         <OutputTag>ACEL_X</OutputTag>
-        <MaxVal>2</MaxVal>
-        <MinVal>1</MinVal>
-        <PChar>)</PChar>
-        <NChar>(</NChar>
+        <MaxVal>4</MaxVal>
+        <MinVal>0.3</MinVal>
+        <NLineGraf>10</NLineGraf>
+        <PChar><![CDATA[>]]></PChar>
+        <NChar><![CDATA[<]]></NChar>
     </GrafVal>
     <GrafVal>
         <InputTag>ACEL_Y</InputTag>
         <OutputTag>ACEL_Y</OutputTag>
-        <MaxVal>25</MaxVal>
-        <MinVal>1</MinVal>
-        <PChar>)</PChar>
-        <NChar>(</NChar>
+        <MaxVal>4</MaxVal>
+        <MinVal>0.3</MinVal>
+        <NLineGraf>10</NLineGraf>
+        <PChar><![CDATA[>]]></PChar>
+        <NChar><![CDATA[<]]></NChar>
     </GrafVal>
     <GrafVal>
         <InputTag>ACEL_Z</InputTag>
         <OutputTag>ACEL_Z</OutputTag>
-        <MaxVal>15</MaxVal>
-        <MinVal>1</MinVal>
+        <MaxVal>4</MaxVal>
+        <MinVal>0.3</MinVal>
+        <NLineGraf>10</NLineGraf>
         <PChar>^</PChar>
-        <NChar>V</NChar>
+        <NChar>v</NChar>
     </GrafVal>
 
     <Header>
