@@ -112,7 +112,7 @@ public class Fm_huds extends Fragment {
 
         for (int i = 0; i < files.length; i++){
         File file = files[i];
-        if (file.isFile() && acCore.isXML(file.getName()))
+        if (file.isFile() && acCore.isExt(file.getName(), "xml"))
             item_esquemas.add(file.getName());
         Log.i("tag4444", "archivo: " + file.getName());
         }
@@ -239,7 +239,7 @@ public class Fm_huds extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             String newFileName = input.getText().toString();
                             if(newFileName!=null) {
-                                if (!acCore.isXML(newFileName))
+                                if (!acCore.isExt(newFileName, "xml"))
                                     newFileName = newFileName + ".xml";
                                 File fileOriginal = new File(rutaHuds + File.separator + archivoEsquemaSeleccionado);
                                 File fileCopy = new File(rutaHuds + File.separator + newFileName);
@@ -317,7 +317,7 @@ public class Fm_huds extends Fragment {
                 for (int i = 0; i < files.length; i++){
                     File fileToCopy = files[i];
                     Log.i("tag4444", "file to copy: " + fileToCopy.getName());
-                    if(acCore.isBack(fileToCopy.getName())){
+                    if(acCore.isExt(fileToCopy.getName(), "back")){
                         Log.i("tag4444", "file to copy is back: " + fileToCopy.getName());
                         Log.i("tag4444", "file to copy sin back: " +  nameNoExt(fileToCopy.getName()));
                         File fileRestored = new File(rutaHuds + File.separator + nameNoExt(fileToCopy.getName()));

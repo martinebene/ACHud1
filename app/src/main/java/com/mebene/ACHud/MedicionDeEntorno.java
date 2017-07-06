@@ -233,12 +233,50 @@ public class MedicionDeEntorno {
         //TimeZone tz = TimeZone.getDefault();
 
         //reemplazar por algo mas matematico
-
+/*
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
         final SimpleDateFormat sdfParser = new SimpleDateFormat(formato);
         sdfParser.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return sdfParser.format(cal.getTime());
+        return sdfParser.format(cal.getTime());*/
+
+
+/*
+        String formatted = String.format("%02d:%02d:%02d,%02d",
+                TimeUnit.MILLISECONDS.toHours(millis),
+                TimeUnit.MILLISECONDS.toMinutes(millis) -
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
+                TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
+                (millis - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)))/10;
+*/
+
+        String salida="";
+
+        switch (formato){
+
+            case ("HH"):
+                salida=String.format(Locale.getDefault(), "%02d", TimeUnit.MILLISECONDS.toHours(millis));
+                break;
+            case ("mm"):
+                salida=String.format(Locale.getDefault(),"%02d", TimeUnit.MILLISECONDS.toMinutes(millis) -
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)));
+                break;
+            case ("ss"):
+                salida=String.format(Locale.getDefault(),"%02d", TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+                break;
+            case ("SSS"):
+                salida=String.format(Locale.getDefault(),"%03d", (millis - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis))));
+                break;
+            default:
+                salida=String.format(Locale.getDefault(),"%03d", millis);
+                break;
+        }
+
+
+
+        return salida;
     }
 
 }

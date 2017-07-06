@@ -1,9 +1,11 @@
 package com.mebene.ACHud;
 
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,7 +31,7 @@ import javax.xml.parsers.SAXParserFactory;
 /**
  * Created by Martin on 03/04/2016.
  */
-public class AcCore {
+public class AcCore implements AsyncProcesCompleteListener<File> {
 
     Context context;
     public boolean adquiriendo;
@@ -37,6 +39,7 @@ public class AcCore {
 
     public String string_prueba;
     private EsquemaHUD esquemaHud;
+    Fm_datos gui_Fm_datos;
 
     //**********************************************************************************************************************//
     public AcCore(Context lcontext) {
@@ -123,7 +126,7 @@ public class AcCore {
                         while ((read = in.read(buffer)) != -1) {
                             out.write(buffer, 0, read);
                         }
-                        if(isXML(fl[i])){
+                        if(isExt(fl[i], "xml")){
                             String newFileNameBack = pathEsquemas +File.separator+ fl[i]+".back";
                             outBack = new FileOutputStream(newFileNameBack);
                             while ((read = in.read(buffer)) != -1) {
@@ -153,156 +156,6 @@ public class AcCore {
 
     }
 
-
-    //**********************************************************************************************************************//
-    public File procesarDatos(File f_out, File f_datos, EsquemaHUD esquema, int delay, int irm_gui){
-//File f_out2  = acCore.procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
-        int n=0;
-        int irm=0;
-        int nroLine=0;
-        String readLine=null;
-
-        OutputStreamWriter fout=null;
-
-        if(f_datos.exists()){
-            try{
-                Log.i("tag444", "entre f datos");
-
-                if (f_out != null)
-                    fout = new OutputStreamWriter(new FileOutputStream(f_out));
-                else {
-                    Log.e("Procesar", "Error al abrir archivo de salida");
-                    return null;}
-
-                FileInputStream fstream = new FileInputStream(f_datos);
-                DataInputStream in = new DataInputStream(fstream);
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-                fout.write(esquema.getHeader());
-
-                Long tMedicionAnterior = 0L;
-
-                String[] arrayValoresAnterior= null;
-
-                //Log.i("tag4444", "Esto devuelve:... "+esquema.getIntervaloRef());
-
-                if(irm_gui>esquema.getIntervaloRef()){
-                    irm = irm_gui;
-                } else {
-                    irm = (int) esquema.getIntervaloRef();
-                }
-
-                nroLine=0;
-
-                while ((readLine = br.readLine()) != null) {
-
-                    String[] arrayValores = readLine.split(",");
-                    //aca chequear si no es un achivo con una linea valida
-
-                    String lineaSrt="";
-
-                    if ((Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]) - tMedicionAnterior) > irm) {
-                        tMedicionAnterior = Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]);
-
-                        if (arrayValoresAnterior != null) {
-                            nroLine++;
-
-                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()];
-                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()];
-                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()];
-                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()];
-
-                            String[] arrayValoresConDelay = aplicarDelay(arrayValoresAnterior, delay + esquema.getDelay());
-
-                            if(Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()])<esquema.getIntroTime())
-                                lineaSrt = esquema.getIntro_sub();
-                            else
-                                lineaSrt = esquema.getMed_sub();
-
-
-
-
-                            Log.i("tag444", "tamaño del vector: " + esquema.grafValVector.size());
-
-                            for(GrafVal gv:esquema.grafValVector) {
-                                Log.i("tag444", "nuevo grafVector: " + gv);
-
-                                float valor = Float.valueOf(arrayValoresConDelay[MedicionDeEntorno.EDA.valueOf(gv.getInputTagName()).ordinal()]);
-
-                                lineaSrt = lineaSrt.replaceAll("\\{" + gv.getOutputTagGrafName() + "\\}", numToGraf( valor, gv.getMin(), gv.getMax(), gv.getNLineGraf() ,gv.getnChar(), gv.getpChar() ));
-
-
-
-
-
-
-                            }
-
-
-
-
-
-
-
-
-
-                            for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
-                                lineaSrt = lineaSrt.replaceAll("\\{" + valor.toString() + "\\}", arrayValoresConDelay[valor.ordinal()]);
-                            }
-
-                            lineaSrt = lineaSrt.replaceAll("\\{" + "NRO_LINE" + "\\}", String.valueOf(nroLine));
-
-                            fout.write(lineaSrt);
-                            Log.i("tag444", lineaSrt);
-                        }
-
-                    arrayValoresAnterior = arrayValores;
-                    }
-                }
-
-                fout.write(esquema.getFooter());
-
-                Log.i("tag444", "lineas al final del readline de datos: "+String.valueOf(n));
-                in.close();
-                fout.close();
-
-            }catch (Exception e){
-                Log.e("tag444", "Error al procesar: " + e);
-                return null;}
-
-        } else{
-            Toast.makeText(context, context.getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
-        }
-
-        return f_out;
-    }
-
-    private String numToGraf(float valor, float min, float max, int nLineGraf, String nChar, String pChar) {
-
-        String graf ="";
-        float charsPerVal = ((max - min)/nLineGraf);
-
-        if((Math.abs(valor) > min) && (Math.abs(valor) <max)) {
-            if(valor>0) {
-                for (float i = 0; i < (charsPerVal*(Math.abs(valor))); ) {
-                    graf = graf + pChar;
-                    i=i + charsPerVal;
-                }
-            }else{
-                for (float i = 0; i < (charsPerVal*(Math.abs(valor))); ) {
-                    graf = graf + nChar;
-                    i=i + charsPerVal;
-                }
-            }
-        }
-        if((Math.abs(valor) > max)){
-            for(int i=0; i < nLineGraf;i++){
-                graf = graf + pChar;
-            }
-        }
-
-        return graf;
-    }
 
 
     //**********************************************************************************************************************//
@@ -551,8 +404,36 @@ public class AcCore {
         }
     }
 
+
+//********************************************************************************************************************************
+    private String numToGraf(float valor, float min, float max, int nLineGraf, String nChar, String pChar) {
+
+        String graf ="";
+        float charsPerVal = ((max - min)/nLineGraf);
+
+        if((Math.abs(valor) > min) && (Math.abs(valor) <max)) {
+            if(valor>0) {
+                for (float i = 0; i < (charsPerVal*(Math.abs(valor))); ) {
+                    graf = graf + pChar;
+                    i=i + charsPerVal;
+                }
+            }else{
+                for (float i = 0; i < (charsPerVal*(Math.abs(valor))); ) {
+                    graf = graf + nChar;
+                    i=i + charsPerVal;
+                }
+            }
+        }
+        if((Math.abs(valor) > max)){
+            for(int i=0; i < nLineGraf;i++){
+                graf = graf + pChar;
+            }
+        }
+
+        return graf;
+    }
 //**********************************************************************************************************************//
-    public boolean isXML(String filename) {
+ /*   public boolean isXML(String filename) {
         String filenameArray[] = filename.split("\\.");
         String extension = filenameArray[filenameArray.length-1];
         if (extension.toLowerCase().compareTo("xml")==0)
@@ -561,7 +442,7 @@ public class AcCore {
             return false;
     }
 
-    //**********************************************************************************************************************//
+    //**********************************************************************************************************************
     public boolean isBack(String filename) {
         String filenameArray[] = filename.split("\\.");
         String extension = filenameArray[filenameArray.length-1];
@@ -571,7 +452,7 @@ public class AcCore {
             return false;
     }
 
-    //**********************************************************************************************************************//
+    //**********************************************************************************************************************
     public boolean isCsv(String filename) {
         String filenameArray[] = filename.split("\\.");
         String extension = filenameArray[filenameArray.length-1];
@@ -580,8 +461,8 @@ public class AcCore {
         else
             return false;
     }
-
-    //**********************************************************************************************************************//
+*/
+    //**********************************************************************************************************************
     public boolean isExt(String filename, String ext) {
         String filenameArray[] = filename.split("\\.");
         String extension = filenameArray[filenameArray.length-1];
@@ -590,6 +471,177 @@ public class AcCore {
         else
             return false;
     }
+//**********************************************************************************************************************//
+     public void procesarDatos(Fm_datos gui, File f_out, File f_datos, EsquemaHUD esquema, int delay, int irm_gui) {
+         AsyncProcesarDatos a = new AsyncProcesarDatos(context, this,  f_out,  f_datos,  esquema,  delay,  irm_gui);
+         a.execute();
+         gui_Fm_datos=gui;
+     }
+
+//*****Callback de la tarea asyncrona *************************************************************************************//
+    public void onTaskComplete(File result) {
+        gui_Fm_datos.shareCreatedFile(result);
+    }
+
+
+//**********************************************************************************************************************//
+//**********************************************************************************************************************//
+private class AsyncProcesarDatos extends AsyncTask<Object, Object, Object> {
+
+//File f_out2  = acCore.procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+    int n = 0;
+    int nroLine = 0;
+    String readLine = null;
+    OutputStreamWriter fout = null;
+    private AsyncProcesCompleteListener<File> callback;
+    Context context;
+    File f_out;
+    File f_datos;
+    EsquemaHUD esquema;
+    int delay;
+    int irm=0;
+    int irm_gui = 0;
+    public ProgressDialog pd;
+
+
+    public AsyncProcesarDatos(Context cont, AsyncProcesCompleteListener<File> cb, File f_out, File f_datos, EsquemaHUD esquema, int delay, int irm_gui){
+        this.callback = cb;
+        this.context = cont;
+        this.f_out = f_out;
+        this.f_datos = f_datos;
+        this.esquema = esquema;
+        this.delay = delay;
+        this.irm_gui = irm_gui;
+
+        pd = new ProgressDialog(context,R.style.MyTheme);
+        pd.setCancelable(false);
+        pd.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+        pd.setMessage("Procesando...");
+    }
+
+    @Override
+    protected void onPreExecute() {
+        pd.show();
+    }
+
+    @Override
+    protected void onPostExecute(Object o) {
+        pd.dismiss();
+        callback.onTaskComplete(f_out);
+    }
+
+    @Override
+    protected Object doInBackground(Object... params) {
+
+        if (f_datos.exists()) {
+            try {
+                Log.i("tag444", "entre f datos");
+
+                if (f_out != null)
+                    fout = new OutputStreamWriter(new FileOutputStream(f_out));
+                else {
+                    Log.e("Procesar", "Error al abrir archivo de salida");
+                    return null;
+                }
+
+                FileInputStream fstream = new FileInputStream(f_datos);
+                DataInputStream in = new DataInputStream(fstream);
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+                fout.write(esquema.getHeader());
+
+                Long tMedicionAnterior = 0L;
+
+                String[] arrayValoresAnterior = null;
+
+                //Log.i("tag4444", "Esto devuelve:... "+esquema.getIntervaloRef());
+
+                if (irm_gui > esquema.getIntervaloRef()) {
+                    irm = irm_gui;
+                } else {
+                    irm = (int) esquema.getIntervaloRef();
+                }
+
+                nroLine = 0;
+
+                while ((readLine = br.readLine()) != null) {
+
+                    String[] arrayValores = readLine.split(",");
+                    //aca chequear si no es un achivo con una linea valida
+
+                    String lineaSrt = "";
+
+                    if ((Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]) - tMedicionAnterior) > irm) {
+                        tMedicionAnterior = Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]);
+
+                        if (arrayValoresAnterior != null) {
+                            nroLine++;
+
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_HH_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_HH_MED.ordinal()];
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_mm_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_mm_MED.ordinal()];
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_ss_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_ss_MED.ordinal()];
+                            arrayValoresAnterior[MedicionDeEntorno.EDA.T1_SSS_MED.ordinal()] = arrayValores[MedicionDeEntorno.EDA.T0_SSS_MED.ordinal()];
+
+                            String[] arrayValoresConDelay = aplicarDelay(arrayValoresAnterior, delay + esquema.getDelay());
+
+                            if (Long.valueOf(arrayValores[MedicionDeEntorno.EDA.T0_SSS_ABS.ordinal()]) < esquema.getIntroTime())
+                                lineaSrt = esquema.getIntro_sub();
+                            else
+                                lineaSrt = esquema.getMed_sub();
+
+
+                            Log.i("tag444", "tamaño del vector: " + esquema.grafValVector.size());
+
+                            for (GrafVal gv : esquema.grafValVector) {
+                                Log.i("tag444", "nuevo grafVector: " + gv);
+
+                                float valor = Float.valueOf(arrayValoresConDelay[MedicionDeEntorno.EDA.valueOf(gv.getInputTagName()).ordinal()]);
+
+                                lineaSrt = lineaSrt.replaceAll("\\{" + gv.getOutputTagGrafName() + "\\}", numToGraf(valor, gv.getMin(), gv.getMax(), gv.getNLineGraf(), gv.getnChar(), gv.getpChar()));
+
+                            }
+
+
+                            for (MedicionDeEntorno.EDA valor : MedicionDeEntorno.EDA.values()) {
+                                lineaSrt = lineaSrt.replaceAll("\\{" + valor.toString() + "\\}", arrayValoresConDelay[valor.ordinal()]);
+                            }
+
+                            lineaSrt = lineaSrt.replaceAll("\\{" + "NRO_LINE" + "\\}", String.valueOf(nroLine));
+
+                            fout.write(lineaSrt);
+                            Log.i("tag444", lineaSrt);
+                        }
+
+                        arrayValoresAnterior = arrayValores;
+                    }
+                }
+
+                fout.write(esquema.getFooter());
+
+                Log.i("tag444", "lineas al final del readline de datos: " + String.valueOf(n));
+                in.close();
+                fout.close();
+
+            } catch (Exception e) {
+                Log.e("tag444", "Error al procesar: " + e);
+                return null;
+            }
+
+        } else {
+            Toast.makeText(context, context.getResources().getString(R.string.s_elemento_no_seleccionado), Toast.LENGTH_LONG).show();
+        }
+
+        return null;
+    }
+
+    @Override
+    protected void onProgressUpdate(Object... params) {
+
+    }
+}
+
 
 //**********************************************************************************************************************//
 }
+
+

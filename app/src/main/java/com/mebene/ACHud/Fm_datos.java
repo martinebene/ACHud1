@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -64,8 +65,8 @@ public class Fm_datos extends Fragment {
     Spinner listaArchivosEsquemas;
     EditText et_irm;
     String archivoDatosSeleccionado, archivoEsquemaSeleccionado, rutaDatos, rutaDeSalida;
-
-
+    ProgressDialog progress;
+    final public Fm_datos activity = this;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,6 +88,9 @@ public class Fm_datos extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        progress = new ProgressDialog(this.getActivity());
+        progress.setIndeterminate(true);
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
     }
 
     @Override
@@ -135,7 +139,7 @@ public class Fm_datos extends Fragment {
 
         for (int i = 0; i < files.length; i++){
             File file = files[i];
-            if (file.isFile() && acCore.isXML(file.getName()))
+            if (file.isFile() && acCore.isExt(file.getName(), "xml"))
                 item_esquemas.add(file.getName());
         }
 
@@ -324,7 +328,8 @@ public class Fm_datos extends Fragment {
                             builderConf.setMessage("Esta accion reemplazara el archivo \"" + fname_out + "\" original");
                             builderConf.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+                                    //procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+                                    acCore.procesarDatos(activity, f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
                                     dialog.dismiss();
                                 }
                             });
@@ -338,7 +343,10 @@ public class Fm_datos extends Fragment {
                             alertConf.show();
                         }
                         else {
-                            procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+//                            progress.show();
+                            //procesarDatos(f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+                            acCore.procesarDatos(activity, f_out, f_datos, esquemaHud, delay_total_in_millis, irm);
+  //                          progress.dismiss();
                         }
                     }
                 });
@@ -474,7 +482,7 @@ public class Fm_datos extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             String newFileName = input.getText().toString();
                             if (newFileName != null) {
-                                if (!acCore.isCsv(newFileName))
+                                if (!acCore.isExt(newFileName, "csv"))
                                     newFileName = newFileName + ".csv";
                                 File fileOriginal = new File(rutaDatos + File.separator + archivoDatosSeleccionado);
                                 File fileCopy = new File(rutaDatos + File.separator + newFileName);
@@ -530,9 +538,9 @@ public class Fm_datos extends Fragment {
     }
 
 //********************************************************************************************************************************
-private void procesarDatos(File f_out, File f_datos, EsquemaHUD esquema, int delay, int irm_gui){
-
-    final File f_out_result=acCore.procesarDatos(f_out, f_datos, esquema, delay, irm_gui);
+public void shareCreatedFile(final File f_out_result){
+    //private void shareCreatedFile(File f_out, File f_datos, EsquemaHUD esquema, int delay, int irm_gui){
+    //final File f_out_result=acCore.procesarDatos(f_out, f_datos, esquema, delay, irm_gui);
 
     if(f_out_result != null){
 
