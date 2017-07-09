@@ -375,7 +375,7 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case 3:
                 Log.e("Aviso", "Entre en dv1 con pos: " + position);
-                fragment = new Fm_2();
+                fragment = new Fm_cam_device();
                 mDrawerTitle = getResources().getString(R.string.menu_captura);;
                 mTitle = getResources().getString(R.string.s_menu_camara_dispositivo);
                 mDrawerExpandableList.clearChoices();

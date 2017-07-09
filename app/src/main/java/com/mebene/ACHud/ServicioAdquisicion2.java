@@ -292,6 +292,8 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         public boolean running=false;
         OutputStreamWriter fout;
         String filename_out=null;
+        File file_out;
+
         @Override
         protected void onPreExecute() {
             t0=t1=0;
@@ -302,8 +304,8 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
                     File ruta_sd = Environment.getExternalStorageDirectory();
                     File ruta_datos_dir = new File(ruta_sd.getAbsolutePath(), getResources().getString(R.string.app_name)+File.separator+ getResources().getString(R.string.s_datos_dir));
-                    File f = new File(ruta_datos_dir.getAbsolutePath(),filename_out);
-                    fout = new OutputStreamWriter(new FileOutputStream(f));
+                    file_out = new File(ruta_datos_dir.getAbsolutePath(),filename_out);
+                    fout = new OutputStreamWriter(new FileOutputStream(file_out));
                 } else{
                     this.cancel(true);
                     stopSelf();
@@ -370,6 +372,15 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
         @Override
         protected void onPostExecute(Object o) {
             Log.i("tag111", "AsyncMedicion onPostExecute");
+
+            Intent intent = new Intent(BROADCAST_MEDICION);
+            if(!(file_out.exists()))
+                intent.putExtra("medicion", "Error al crear el archivo de salida de medicion.");
+            else
+                intent.putExtra("medicion", medicion.toDisplayFinal() + "Archivo de datos " + filename_out + " creado con exito.");
+
+            LocalBroadcastManager.getInstance(lcontext).sendBroadcast(intent);
+
             try {
                 fout.flush();
                 fout.close();
@@ -377,9 +388,7 @@ public class ServicioAdquisicion2 extends Service implements SensorEventListener
                 e.printStackTrace();
             }
 
-            Intent intent = new Intent(BROADCAST_MEDICION);
-            intent.putExtra("medicion", medicion.toDisplayFinal());
-            LocalBroadcastManager.getInstance(lcontext).sendBroadcast(intent);
+
 
 
             running=false;
