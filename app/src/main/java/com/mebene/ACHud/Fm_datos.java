@@ -8,28 +8,31 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -66,12 +69,16 @@ public class Fm_datos extends Fragment {
     EditText et_irm;
     String archivoDatosSeleccionado, archivoEsquemaSeleccionado, rutaDatos, rutaDeSalida;
     ProgressDialog progress;
+    ImageView ImageViewHuds;
+
+
     final public Fm_datos activity = this;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fm_datos, container, false);
+
 
         return rootView;
     }
@@ -91,6 +98,7 @@ public class Fm_datos extends Fragment {
         progress = new ProgressDialog(this.getActivity());
         progress.setIndeterminate(true);
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
     }
 
     @Override
@@ -110,6 +118,8 @@ public class Fm_datos extends Fragment {
         archivoDatosSeleccionado=null;
         item_datos = new ArrayList<String>();
         item_esquemas = new ArrayList<String>();
+
+        ImageViewHuds = (ImageView) getView().findViewById(R.id.iV_Huds_datos);
 
         rutaDatos = Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator+ getResources().getString(R.string.s_datos_dir);
         rutaDeSalida = Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
@@ -166,6 +176,64 @@ public class Fm_datos extends Fragment {
             }
         });
         listaArchivosEsquemas.setAdapter(fileListEsq);
+/*
+        listaArchivosEsquemas.setOnTouchListener( new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    File file = new File(Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
+                            + getResources().getString(R.string.s_esquemas_dir) + File.separator +nameNoExt((String)listaArchivosEsquemas.getSelectedItem())+".png");
+                    if(file.exists()) {
+                        Log.e("tag3434", "abs path: " + file.getAbsolutePath());
+                        ImageViewHuds.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
+                    } else{
+                        ImageViewHuds.setImageResource(R.drawable.no_preview);
+                    }
+                }
+
+            return false;
+            }}
+        );
+*/
+ /*       listaArchivosEsquemas.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                    Log.e("tag34343", "abs path AAA ");
+                    File file = new File(Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
+                            + getResources().getString(R.string.s_esquemas_dir) + File.separator +nameNoExt((String)listaArchivosEsquemas.getSelectedItem())+".png");
+                    if(file.exists()) {
+                        Log.e("tag34343", "abs path: " + file.getAbsolutePath());
+                        ImageViewHuds.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
+                    } else{
+                        ImageViewHuds.setImageResource(R.drawable.no_preview);
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+*/
+        listaArchivosEsquemas.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+                        //Object item = parent.getItemAtPosition(pos);
+                        //System.out.println(item.toString());     //prints the text in spinner item.
+
+                        File file = new File(Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator
+                                + getResources().getString(R.string.s_esquemas_dir) + File.separator +nameNoExt((String)listaArchivosEsquemas.getSelectedItem())+".png");
+                        if(file.exists()) {
+                            Log.e("tag34343", "abs path: " + file.getAbsolutePath());
+                            ImageViewHuds.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
+                             }else {
+                            ImageViewHuds.setImageResource(R.drawable.no_preview);
+                            }
+                            };
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        ImageViewHuds.setImageResource(R.drawable.no_preview);
+                    }
+                });
+
 
         //*****SPINERS
         NumberPicker np_min = (NumberPicker) getView().findViewById(R.id.nP_min_delay);
@@ -679,4 +747,17 @@ public void shareCreatedFile(final File f_out_result){
 
 
 //********************************************************************************************************************************
+private String nameNoExt(String name) {
+    String filenameArray[] = name.split("\\.");
+    String newFilename="";
+    for(int i=0; i<(filenameArray.length-1);i++)
+        if(newFilename.compareTo("")==0){
+            newFilename=filenameArray[i];}
+        else{
+            newFilename=newFilename+"."+filenameArray[i];}
+    return newFilename;
     }
+
+//********************************************************************************************************************************
+
+}

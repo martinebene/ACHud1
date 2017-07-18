@@ -353,7 +353,7 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case 1:
                 Log.e("Aviso", "Entre en dv1 con pos: " + position);
-                fragment = new Fm_2();
+                fragment = new Camera2VideoFragment();
                 mDrawerTitle = getResources().getString(R.string.menu_captura);
                 mTitle = getResources().getString(R.string.s_menu_gopro);
                 mDrawerExpandableList.clearChoices();

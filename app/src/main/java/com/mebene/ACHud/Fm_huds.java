@@ -95,7 +95,7 @@ public class Fm_huds extends Fragment {
 
         final ImageView ImageViewHuds = (ImageView) getView().findViewById(R.id.imageViewHuds);
 
-        ImageViewHuds.setImageResource(R.drawable.preview);
+        ImageViewHuds.setImageResource(R.drawable.no_preview);
 
         rutaHuds = Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator+ getResources().getString(R.string.s_esquemas_dir);
         TextView ruta = (TextView)  getView().findViewById(R.id.tV_ruta_huds);

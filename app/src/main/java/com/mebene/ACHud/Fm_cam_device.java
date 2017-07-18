@@ -7,11 +7,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.Camera;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -19,16 +25,30 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by miguelmorales on 17/4/15.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class Fm_cam_device extends Fragment {
+public class Fm_cam_device extends Fragment implements SurfaceHolder.Callback  {
 
     AcCore acCore;
     TextView tV_Status;
     EditText eT_Consola;
     ImageButton ibRec, ibStop, ibSyncro, ibAyudaInterface;
+
+
+
+    private MediaRecorder mediaRecorder = null;
+    //private MediaPlayer mediaPlayer = null;
+    private String fileNameVideo = null;
+    private boolean recordingVideo = false;
+    //Camera mCamera;
+
 
     public Fm_cam_device() {
     }
@@ -66,6 +86,19 @@ public class Fm_cam_device extends Fragment {
         ibSyncro = (ImageButton) getView().findViewById(R.id.ibSyncro_cd);
         ibAyudaInterface = (ImageButton) getView().findViewById(R.id.ibAyudaInterface_cd);
 
+        final String rutaDeSalida = Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name)+File.separator+getResources().getString(R.string.s_out_dir);
+
+        //fileNameVideo = rutaDeSalida + filename_out;
+
+
+
+        SurfaceView surface = (SurfaceView)getView().findViewById(R.id.surfaceV_cd);
+        SurfaceHolder holder = surface.getHolder();
+        holder.addCallback(this);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
+
+
         if(acCore.isAdquisicionRunning()){
             ibRec.setClickable(false);
             ibRec.setBackgroundResource(R.drawable.ic_icono_bsckground_selected);
@@ -76,22 +109,27 @@ public class Fm_cam_device extends Fragment {
                 acCore.iniciarAdquisicion();
                 ibRec.setClickable(false);
                 ibRec.setBackgroundResource(R.drawable.ic_icono_bsckground_selected);
-
-
-                Toast toast = Toast.makeText(getActivity(), "SYNC", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getActivity(), "RECORDING", Toast.LENGTH_LONG);
                 View toastView = toast.getView(); //This'll return the default View of the Toast.
-
-        /* And now you can get the TextView of the default View of the Toast. */
                 TextView toastMessage = (TextView) toastView.findViewById(android.R.id.message);
-                //toastMessage.setTextSize(R.integer.texto_gigante_altura);
-                toastMessage.setTextSize(75);
-                toastMessage.setBackgroundColor(getResources().getColor(R.color.rojo));
-                //toastMessage.setHighlightColor(getResources().getColor(R.color.rojo));
-                //toastMessage.setTextColor(R.color.ro);
-                //toastMessage.setGravity(Gravity.CENTER,0,0);
                 toastMessage.setCompoundDrawablePadding(16);
                 toast.setGravity(Gravity.CENTER,0,0);
                 toast.show();
+
+
+                prepareRecorder();
+                SimpleDateFormat formateador = new SimpleDateFormat("dd_MM_yy_HH_mm_ss");
+                String filenameVideo_out = "ACHUD_Out_" + formateador.format(new Date()) +".mp4";
+                mediaRecorder.setOutputFile(rutaDeSalida +File.separator+ filenameVideo_out);
+                try {
+                    mediaRecorder.prepare();
+                } catch (IllegalStateException e) {
+                } catch (IOException e) {
+                }
+
+                mediaRecorder.start();
+                recordingVideo = true;
+
             }
         });
 
@@ -101,7 +139,15 @@ public class Fm_cam_device extends Fragment {
                 acCore.detenerAdquisicion();
                 ibRec.setClickable(true);
                 ibRec.setBackgroundResource(R.drawable.ic_icono_bsckground_unselected);
-                //eT_Consola.setText("detenido");
+
+                if (recordingVideo) {
+                    recordingVideo = false;
+                    mediaRecorder.stop();
+                    mediaRecorder.reset();
+                } /*else if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                }*/
 
             }
         });
@@ -109,35 +155,15 @@ public class Fm_cam_device extends Fragment {
         ibSyncro.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 eT_Consola.setText(ServicioAdquisicion2.listarSensores(getActivity()));
-                //eT_Consola.setText("caca");
             }
         });
 
         ibAyudaInterface.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                /*Vector<String> result = new Vector<String>();
-                try {
-                    FileInputStream f = getActivity().openFileInput("prueba_int.txt");
-                    BufferedReader entrada = new BufferedReader(
-                            new InputStreamReader(f));
-                    int n = 0;
-                    String linea;
-                    do {
-                        linea = entrada.readLine();
-                        if (linea != null) {
-                            result.add(linea);
-                            n++;
-                        }
-                    } while (linea != null);
-                    f.close();
-                } catch (Exception e) {
-                    Log.e("Asteroides", e.getMessage(), e);
-                }*/
-                eT_Consola.setText(/*result.toString()*/"pedo");
+                eT_Consola.setText("pedo");
             }
         });
     }
-
 
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -155,4 +181,48 @@ public class Fm_cam_device extends Fragment {
         LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
+
+
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+       // mCamera = Camera.open();
+        //mCamera.unlock();
+
+        if (mediaRecorder == null) {
+            mediaRecorder = new MediaRecorder();
+            mediaRecorder.setPreviewDisplay(holder.getSurface());
+        }
+/*
+        if (mediaPlayer == null) {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDisplay(holder);
+        }
+*/
+    }
+
+    public void prepareRecorder(){
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+    }
+
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width,
+                               int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        //mCamera.stopPreview();
+        //mCamera.release();
+
+        mediaRecorder.release();
+        //mediaPlayer.release();
+    }
+
 }
