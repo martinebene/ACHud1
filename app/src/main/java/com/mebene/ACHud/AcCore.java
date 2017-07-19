@@ -127,10 +127,13 @@ public class AcCore implements AsyncProcesCompleteListener<File> {
                             out.write(buffer, 0, read);
                         }
                         if(isExt(fl[i], "xml")){
+                            in = assetManager.open(context.getString(R.string.s_esquemas_assets_dir)+File.separator+fl[i]);
                             String newFileNameBack = pathEsquemas +File.separator+ fl[i]+".back";
                             outBack = new FileOutputStream(newFileNameBack);
+                            Log.i("tag3434: ", newFileNameBack);
                             while ((read = in.read(buffer)) != -1) {
                                 outBack.write(buffer, 0, read);
+                                Log.i("tag3434: ", buffer.toString());
                             }
                         }
 
