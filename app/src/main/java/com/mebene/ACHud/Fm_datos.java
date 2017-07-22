@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -83,14 +84,21 @@ public class Fm_datos extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onAttach(Context cont) {
+        super.onAttach(cont );
+        MainActivity ma = (MainActivity) getActivity();
+        acCore = ma.acCore;
+    }
 
+    /*
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         MainActivity ma = (MainActivity) activity;
         acCore = ma.acCore;
     }
-
+*/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

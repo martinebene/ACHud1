@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.mebene.ACHud.MainActivity;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -53,7 +54,15 @@ public class Fm_cam_generica extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onAttach(Context cont) {
+        super.onAttach(cont );
+        MainActivity ma = (MainActivity) getActivity();
+        acCore = ma.acCore;
+        Log.e("tag3434", "entre en onAtach");
+    }
 
+    /*
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -61,7 +70,7 @@ public class Fm_cam_generica extends Fragment {
         acCore = ma.acCore;
 
     }
-
+*/
 
     @Override
     public void onResume() {

@@ -17,13 +17,21 @@
             android:layout_width="match_parent"
             android:layout_height="40dp" />
 
-        <SurfaceView
-            android:id="@+id/surfaceV_cd"
+        <com.mebene.ACHud.AutoFitTextureView
+            android:id="@+id/texture"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="10dp"
             android:layout_weight="0.5" />
 
+
+ <!--       <SurfaceView
+            android:id="@+id/surfaceV_cd"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:layout_weight="0.5" />
+-->
         <EditText
             android:id="@+id/eT_Consola_cd"
             android:layout_width="match_parent"

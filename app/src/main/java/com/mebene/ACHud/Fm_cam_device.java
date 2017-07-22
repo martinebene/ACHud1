@@ -92,7 +92,8 @@ public class Fm_cam_device extends Fragment implements SurfaceHolder.Callback  {
 
 
 
-        SurfaceView surface = (SurfaceView)getView().findViewById(R.id.surfaceV_cd);
+       // SurfaceView surface = (SurfaceView)getView().findViewById(R.id.surfaceV_cd);
+        SurfaceView surface = (SurfaceView)getView().findViewById(R.id.texture);
         SurfaceHolder holder = surface.getHolder();
         holder.addCallback(this);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);

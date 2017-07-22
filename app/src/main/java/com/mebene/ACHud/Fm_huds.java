@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -62,7 +63,15 @@ public class Fm_huds extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onAttach(Context cont) {
+        super.onAttach(cont );
+        MainActivity ma = (MainActivity) getActivity();
+        acCore = ma.acCore;
+    }
 
+
+/*
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -70,7 +79,7 @@ public class Fm_huds extends Fragment {
         acCore = ma.acCore;
 
     }
-
+*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
