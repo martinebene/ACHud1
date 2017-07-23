@@ -613,7 +613,7 @@ public class Camera2VideoFragment extends Fragment
         }
 */
         mMediaRecorder.setOrientationHint(90);
-
+//c
         mMediaRecorder.prepare();
     }
 
